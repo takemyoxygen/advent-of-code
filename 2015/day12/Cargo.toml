@@ -1,0 +1,7 @@
+[package]
+name = "day12"
+version = "0.1.0"
+authors = ["Uladzimir Makarau <uladzimir.makarau@gmail.com>"]
+
+[dependencies]
+serde_json = "*"

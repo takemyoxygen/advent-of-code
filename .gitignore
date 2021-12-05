@@ -1,0 +1,17 @@
+*.txt
+
+2016/hs/**/*
+!2016/hs/**/*.*
+.stack-work
+*.hi
+*.o
+
+.idea
+2016/clj/target
+.lein-failures
+.nrepl-port
+*.jar
+*.class
+
+__pycache__
+
