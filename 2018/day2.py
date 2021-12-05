@@ -1,5 +1,6 @@
 from functools import reduce
 from typing import Union
+import core
 
 def process_word(word: str) -> tuple[int, int]:
   char_counts = {}
@@ -48,6 +49,5 @@ def part2(words: list[str]) -> str:
   return common
 
 
-ids = open('input/day2.txt').readlines()
-print('Part 1', part1(ids))
-print('Part 2', part2(ids))
+
+core.run(part1, part2)
