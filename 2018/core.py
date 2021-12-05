@@ -25,6 +25,6 @@ def run(part1=None, part2=None,process_input=None):
   input_lines = open(options.input_file).readlines()
   input = process_input(input_lines) if process_input is not None else input_lines
   if part1 is not None and not options.part2_only:
-    print('Part 1:', part1(input))
+    print('Part 1:', part1(*input))
   if part2 is not None and not options.part1_only:
-    print('Part 2:', part2(input))
+    print('Part 2:', part2(*input))
