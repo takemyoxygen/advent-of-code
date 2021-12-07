@@ -24,6 +24,7 @@ def run(part1=None, part2=None,process_input=None):
   options = get_options()
   input_lines = open(options.input_file).readlines()
   input = process_input(input_lines) if process_input is not None else input_lines
+  input = input if type(input) is tuple else (input,)
   if part1 is not None and not options.part2_only:
     print('Part 1:', part1(*input))
   if part2 is not None and not options.part1_only:
