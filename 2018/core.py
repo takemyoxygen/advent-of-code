@@ -2,6 +2,7 @@
 
 import os
 import argparse
+from typing import Callable
 
 
 def fst(x):
@@ -36,12 +37,15 @@ def get_options():
     return options
 
 
-def run(part1=None, part2=None, process_input=None):
+def run(part1=None, part2=None, process_input: Callable = None):
     options = get_options()
     input_lines = open(options.input_file).readlines()
-    input = process_input(
-        input_lines) if process_input is not None else input_lines
+
+    input = input_lines
+    if process_input is not None:
+        input = process_input(input_lines) if process_input.__code__.co_argcount == 1 else process_input(input_lines, options)
     input = input if type(input) is tuple else (input,)
+    
     if part1 is not None and not options.part2_only:
         print('Part 1:', part1(*input))
     if part2 is not None and not options.part1_only:
