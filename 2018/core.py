@@ -2,7 +2,8 @@
 
 import os
 import argparse
-from typing import Callable
+from typing import Any, Callable
+import time
 
 
 def fst(x):
@@ -37,6 +38,13 @@ def get_options():
     return options
 
 
+def measure(f: Callable) -> tuple[Any, int]:
+    start = time.time()
+    result = f()
+    end = time.time()
+    return [result, end - start]
+
+
 def run(part1=None, part2=None, process_input: Callable = None):
     options = get_options()
     input_lines = open(options.input_file).readlines()
@@ -47,6 +55,8 @@ def run(part1=None, part2=None, process_input: Callable = None):
     input = input if type(input) is tuple else (input,)
     
     if part1 is not None and not options.part2_only:
-        print('Part 1:', part1(*input))
+        result, elapsed = measure(lambda: part1(*input))
+        print(f"Part 1: {result} ({elapsed:.3f} sec)")
     if part2 is not None and not options.part1_only:
-        print('Part 2:', part2(*input))
+        result, elapsed = measure(lambda: part2(*input))
+        print(f"Part 2: {result} ({elapsed:.3f} sec)")
