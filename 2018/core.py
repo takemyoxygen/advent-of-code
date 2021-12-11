@@ -47,13 +47,13 @@ def measure(f: Callable) -> tuple[Any, int]:
 
 def run(part1=None, part2=None, process_input: Callable = None):
     options = get_options()
-    input_lines = open(options.input_file).readlines()
+    input_lines = [line.strip() for line in open(options.input_file).readlines()]
 
     input = input_lines
     if process_input is not None:
         input = process_input(input_lines) if process_input.__code__.co_argcount == 1 else process_input(input_lines, options)
     input = input if type(input) is tuple else (input,)
-    
+
     if part1 is not None and not options.part2_only:
         result, elapsed = measure(lambda: part1(*input))
         print(f"Part 1: {result} ({elapsed:.3f} sec)")
