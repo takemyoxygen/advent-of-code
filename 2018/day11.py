@@ -1,8 +1,10 @@
+from typing import TypeAlias
 import core
-import functools
 
 
-@functools.cache
+Grid: TypeAlias = list[list[int]]
+
+
 def power_level(x: int, y: int, serial_number: int) -> int:
     rack_id = x + 10
     power = rack_id * y + serial_number
@@ -11,24 +13,61 @@ def power_level(x: int, y: int, serial_number: int) -> int:
     return power - 5
 
 
-@functools.cache
-def find_square_power(x: int, y: int, size: int, serial_number: int) -> int:
-    return sum(power_level(x + dx, y + dy, serial_number) for dx in range(0, size) for dy in range(0, size))
+def empty_grid() -> Grid:
+    grid = []
+    for i in range(0, 300):
+        grid.append([None] * 300)
+    return grid
 
 
-def find_max_power_square(serial_number: int, size: int) -> tuple[int, int, int]:
-    coords = ((x, y) for x in range(1, 301 - size) for y in range(1, 301 - size))
-    with_power = ((x, y, find_square_power(x, y, size, serial_number)) for x, y in coords)
-    return max(with_power, key=lambda x: x[2])
+def calc_power_sum_grid(serial_number: int, size: int, smaller_sum_grids: dict[int, Grid]) -> Grid:
+    grid = empty_grid()
+    coords = ((x, y) for x in range(1, 301 - size + 1)
+              for y in range(1, 301 - size + 1))
+    if size == 1:
+        for x, y in coords:
+            grid[y - 1][x - 1] = power_level(x, y, serial_number)
+    else:
+        for x, y in coords:
+            grid[y - 1][x - 1] = smaller_sum_grids[size-1][y][x - 1] + \
+                smaller_sum_grids[size-1][y - 1][x] - \
+                (smaller_sum_grids[size - 2][y][x] if size - 2 in smaller_sum_grids else 0) + \
+                smaller_sum_grids[1][y - 1][x - 1] + \
+                smaller_sum_grids[1][y + size - 2][x + size - 2]
+    return grid
 
 
-def part1(serial_number: int) -> int:
-    return find_max_power_square(serial_number, 3)
+def find_max(grid: Grid, size: int) -> tuple[int, int, int]:
+    x, y = max(((x, y) for x in range(1, 301 - size + 1)
+               for y in range(1, 301 - size + 1)), key=lambda p: grid[p[1] - 1][p[0] - 1])
+    return x, y, grid[y - 1][x - 1]
 
 
-def part2(serial_number: int) -> int:
-    with_max_power = ((x, y, size, power) for size, (x, y, power) in ((size, find_max_power_square(serial_number, size)) for size in range(1, 301)))
-    return max(with_max_power, key=lambda x: x[3])
+def part1(serial_number: int):
+    sum_grids_per_size = {}
+    for size in range(1, 4):
+        sum_grids_per_size[size] = calc_power_sum_grid(
+            serial_number, size, sum_grids_per_size)
+    x, y, _ = find_max(sum_grids_per_size[3], 3)
+    return f'{x},{y}'
+
+
+def part2(serial_number: int):
+    sizes = range(1, 301)
+    max_per_size = {}
+    sum_grids_per_size = {}
+
+    for size in sizes:
+        grid = calc_power_sum_grid(serial_number, size, sum_grids_per_size)
+        sum_grids_per_size[size] = grid
+        max_per_size[size] = find_max(grid, size)
+
+        if max_per_size[size][2] < 0:
+            break
+
+    max_size = max(max_per_size, key=lambda k: max_per_size[k][2])
+    x, y, _ = max_per_size[max_size]
+    return f'{x},{y},{max_size}'
 
 
 core.run(part1, part2, process_input=lambda lines: int(lines[0]))
