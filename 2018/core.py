@@ -19,17 +19,20 @@ def replace_at(s: str, i: int, new_char: str) -> str:
 
 
 def last(xs):
-  return xs[len(xs) - 1]
+    return xs[len(xs) - 1]
 
 
-def get_options():
+def get_options(is_test=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--test', dest='is_test', action='store_true')
     parser.add_argument('--part1', dest='part1_only', action='store_true')
     parser.add_argument('--part2', dest='part2_only', action='store_true')
     parser.add_argument('--input', dest='input_file')
-
     options = parser.parse_args()
+
+    if is_test is not None:
+        options.is_test = is_test
+
     if options.input_file is None:
         file_prefix = '-test' if options.is_test else ''
         options.input_file = os.path.join(
@@ -45,13 +48,15 @@ def measure(f: Callable) -> tuple[Any, int]:
     return [result, end - start]
 
 
-def run(part1=None, part2=None, process_input: Callable = None):
-    options = get_options()
-    input_lines = [line.strip() for line in open(options.input_file).readlines()]
+def run(part1=None, part2=None, process_input: Callable = None, is_test=None):
+    options = get_options(is_test)
+    input_lines = [line.rstrip('\n')
+                   for line in open(options.input_file).readlines()]
 
     input = input_lines
     if process_input is not None:
-        input = process_input(input_lines) if process_input.__code__.co_argcount == 1 else process_input(input_lines, options)
+        input = process_input(input_lines) if process_input.__code__.co_argcount == 1 else process_input(
+            input_lines, options)
     input = input if type(input) is tuple else (input,)
 
     if part1 is not None and not options.part2_only:
