@@ -1,8 +1,7 @@
 from enum import Enum
-from os import DirEntry
 from typing import TypeAlias
 from core import replace_at, run
-from itertools import count
+
 
 Track: TypeAlias = list[str]
 Location: TypeAlias = tuple[int, int]
@@ -59,6 +58,12 @@ class Cart:
     def __repr__(self) -> str:
         return self.__str__()
 
+    def __hash__(self) -> int:
+        return self.id
+
+
+Crash: TypeAlias = tuple[Cart, Cart]
+
 
 def parse_input(lines: list[str]) -> tuple[Track, list[Cart]]:
     track = []
@@ -113,32 +118,34 @@ def move(track: Track, cart: Cart) -> None:
     cart.location = next_location(cart.location, cart.direction)
 
 
-def print_track(track: Track, carts: list[Cart]) -> None:
-    carts_by_position = dict(map(lambda cart: (cart.location, cart), carts))
-    for y in range(len(track)):
-        for x in range(len(track[y])):
-            if (x, y) in carts_by_position:
-                match carts_by_position[x, y].direction:
-                    case Direction.LEFT: print('<', end='')
-                    case Direction.RIGHT: print('>', end='')
-                    case Direction.UP: print('^', end='')
-                    case Direction.DOWN: print('v', end='')
-            else:
-                print(track[y][x], end='')
-        print('')
+def fmt_location(location: Location) -> str:
+    return f'{location[0]},{location[1]}'
 
 
-def part1(track: Track, carts: list[Cart]):
-    for time in count(1):
-        print('Processing time', time)
-        cart_locations = set()
-        for cart in sorted(carts, key=lambda cart: (cart.location[1], cart.location[0])):
+def solve(lines: list[str]) -> tuple[Location, Location]:
+    track, carts = parse_input(lines)
+    remaining_carts = set(carts)
+    carts_by_location = dict(map(lambda cart: (cart.location, cart), carts))
+    first_crash_location = None
+    while len(remaining_carts) > 1:
+        for cart in sorted(remaining_carts, key=lambda cart: (cart.location[1], cart.location[0])):
+            if cart not in remaining_carts:
+                continue
+
+            del carts_by_location[cart.location]
             move(track, cart)
-            if cart.location in cart_locations:
-                return cart.location
+
+            if cart.location in carts_by_location:
+                if first_crash_location is None:  # part1
+                    first_crash_location = cart.location
+                remaining_carts.remove(cart)
+                remaining_carts.remove(carts_by_location[cart.location])
+                del carts_by_location[cart.location]
             else:
-                cart_locations.add(cart.location)
-        # print_track(track, carts)
+                carts_by_location[cart.location] = cart
+    last_cart = remaining_carts.pop()
+    return first_crash_location, last_cart.location
 
 
-run(part1, process_input=parse_input)
+run(part1=lambda p1, _: fmt_location(p1), part2=lambda _,
+    p2: fmt_location(p2), process_input=solve)
