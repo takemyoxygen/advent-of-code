@@ -48,15 +48,18 @@ def measure(f: Callable) -> tuple[Any, int]:
     return [result, end - start]
 
 
-def run(part1=None, part2=None, process_input: Callable = None, is_test=None):
+def run(part1=None, part2=None, process_input: Callable = None, input=None, test_intput=None, is_test=None,):
     options = get_options(is_test)
-    input_lines = [line.rstrip('\n')
-                   for line in open(options.input_file).readlines()]
+    input = test_intput if options.is_test else input
+    if input is None:
+        input_lines = [line.rstrip('\n')
+                    for line in open(options.input_file).readlines()]
 
-    input = input_lines
-    if process_input is not None:
-        input = process_input(input_lines) if process_input.__code__.co_argcount == 1 else process_input(
-            input_lines, options)
+        input = input_lines
+        if process_input is not None:
+            input = process_input(input_lines) if process_input.__code__.co_argcount == 1 else process_input(
+                input_lines, options)
+
     input = input if type(input) is tuple else (input,)
 
     if part1 is not None and not options.part2_only:
