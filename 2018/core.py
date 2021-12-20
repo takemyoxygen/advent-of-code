@@ -48,13 +48,15 @@ def measure(f: Callable) -> tuple[Any, int]:
     return [result, end - start]
 
 
+def read_lines(file: str) -> list[str]:
+    return [line.rstrip('\n') for line in open(file).readlines()]
+
+
 def run(part1=None, part2=None, process_input: Callable = None, input=None, test_intput=None, is_test=None,):
     options = get_options(is_test)
     input = test_intput if options.is_test else input
     if input is None:
-        input_lines = [line.rstrip('\n')
-                    for line in open(options.input_file).readlines()]
-
+        input_lines = read_lines(options.input_file)
         input = input_lines
         if process_input is not None:
             input = process_input(input_lines) if process_input.__code__.co_argcount == 1 else process_input(
