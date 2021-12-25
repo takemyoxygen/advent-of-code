@@ -2,15 +2,17 @@
 
 import os
 import argparse
-from typing import Any, Callable
+from typing import Any, Callable, TypeVar
+from collections.abc import Sequence
 import time
 
+A = TypeVar("A")
 
-def fst(x):
+def fst(x: Sequence[A]) -> A:
     return x[0]
 
 
-def snd(x):
+def snd(x: Sequence[A]) -> A:
     return x[1]
 
 
@@ -18,11 +20,11 @@ def replace_at(s: str, i: int, new_char: str) -> str:
     return s[:i] + new_char + s[i + 1:]
 
 
-def last(xs):
+def last(xs: Sequence[A]) -> A:
     return xs[len(xs) - 1]
 
 
-def get_options(is_test=None):
+def get_options(is_test:bool | None = None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--test', dest='is_test', action='store_true')
     parser.add_argument('--part1', dest='part1_only', action='store_true')
