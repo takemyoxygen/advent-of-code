@@ -24,6 +24,13 @@ def last(xs: Sequence[A]) -> A:
     return xs[len(xs) - 1]
 
 
+id = 0
+def next_id() -> int:
+    global id
+    id += 1
+    return id
+
+
 def get_options(is_test:bool | None = None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--test', dest='is_test', action='store_true')
