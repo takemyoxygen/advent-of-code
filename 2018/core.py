@@ -24,6 +24,13 @@ def last(xs: Sequence[A]) -> A:
     return xs[len(xs) - 1]
 
 
+def empty_grid(rows: int, cols: int, init_value: A) -> list[list[A]]:
+    grid = list[list[A]]()
+    for _ in range(0, rows):
+        grid.append([init_value] * cols)
+    return grid
+
+
 id = 0
 def next_id() -> int:
     global id
