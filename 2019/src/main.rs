@@ -1,4 +1,6 @@
 mod day1;
+mod day2;
+
 mod solver;
 mod utils;
 
@@ -6,11 +8,14 @@ use std::path::Path;
 use std::env;
 use std::collections::HashMap;
 
-use solver::Day;
+use solver::{Solvable};
 
-fn get_all_solvers() -> HashMap<u16, impl Day> {
+fn get_all_solvers() -> HashMap<u16, Box<dyn Solvable>> {
     let mut solvers = HashMap::new();
-    solvers.insert(1, day1::Day1);
+
+    solvers.insert(1, Box::new(day1::Day1) as Box<dyn Solvable>);
+    solvers.insert(2, Box::new(day2::Day2) as Box<dyn Solvable>);
+
     solvers
 }
 

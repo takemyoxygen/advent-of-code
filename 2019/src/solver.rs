@@ -1,5 +1,5 @@
-use std::path::Path;
 use std::fmt;
+use std::path::Path;
 
 pub struct Answer {
     pub part1: Option<String>,
@@ -21,12 +21,21 @@ pub trait Day {
     fn process(file: &Path) -> Self::Intermediate;
     fn part1(input: &Self::Intermediate) -> String;
     fn part2(input: &Self::Intermediate) -> String;
+}
 
+pub trait Solvable {
+    fn solve(&self, file: &Path) -> Answer;
+}
+
+impl<T: Day> Solvable for T {
     fn solve(&self, file: &Path) -> Answer {
         let input = Self::process(file);
         let part1 = Self::part1(&input);
         let part2 = Self::part2(&input);
 
-        Answer{part1: Some(part1), part2: Some(part2)}
+        Answer {
+            part1: Some(part1),
+            part2: Some(part2),
+        }
     }
 }

@@ -23,8 +23,7 @@ impl Day for Day1 {
     fn process(file: &Path) -> Self::Intermediate {
         let lines = read_lines(file);
         lines
-            .filter(|line| line.is_ok())
-            .map(|line| str::parse::<i32>(&line.unwrap()).unwrap())
+            .map(|line| str::parse::<i32>(&line).unwrap())
             .collect()
     }
 
