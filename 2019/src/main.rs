@@ -2,15 +2,16 @@ mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 mod solver;
 mod utils;
 
-use std::path::Path;
-use std::env;
 use std::collections::HashMap;
+use std::env;
+use std::path::Path;
 
-use solver::{Solvable};
+use solver::Solvable;
 
 fn get_all_solvers() -> HashMap<u16, Box<dyn Solvable>> {
     let mut solvers = HashMap::new();
@@ -19,6 +20,7 @@ fn get_all_solvers() -> HashMap<u16, Box<dyn Solvable>> {
     solvers.insert(2, Box::new(day2::Day2) as Box<dyn Solvable>);
     solvers.insert(3, Box::new(day3::Day3) as Box<dyn Solvable>);
     solvers.insert(4, Box::new(day4::Day4) as Box<dyn Solvable>);
+    solvers.insert(5, Box::new(day5::Day5) as Box<dyn Solvable>);
 
     solvers
 }
@@ -26,15 +28,27 @@ fn get_all_solvers() -> HashMap<u16, Box<dyn Solvable>> {
 fn main() {
     let args: Vec<String> = env::args().collect();
     let is_test = args.contains(&String::from("--test"));
-    let explicit_day = args.into_iter().filter_map(|arg| str::parse::<u16>(&arg).ok()).next();
+    let part1_only = args.contains(&String::from("--part1"));
+    let part2_only = args.contains(&String::from("--part2"));
+    let explicit_day = args
+        .into_iter()
+        .filter_map(|arg| str::parse::<u16>(&arg).ok())
+        .next();
     let solvers = get_all_solvers();
-    let day = explicit_day.as_ref().or_else(|| solvers.keys().max()).unwrap();
-    let test_postfix = if is_test {"-test"} else {""};
+    let day = explicit_day
+        .as_ref()
+        .or_else(|| solvers.keys().max())
+        .unwrap();
+    let test_postfix = if is_test { "-test" } else { "" };
     match solvers.get(day) {
         Some(solver) => {
-            let answer = solver.solve(&Path::new(&format!("./input/day{}{}.txt", day, test_postfix)));
+            let answer = solver.solve(
+                &Path::new(&format!("./input/day{}{}.txt", day, test_postfix)),
+                !part2_only,
+                !part1_only,
+            );
             println!("{}", answer);
         }
-        _ => println!("You haven't solved day {} yet", day)
+        _ => println!("You haven't solved day {} yet", day),
     }
 }

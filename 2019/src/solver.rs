@@ -24,14 +24,22 @@ pub trait Day {
 }
 
 pub trait Solvable {
-    fn solve(&self, file: &Path) -> Answer;
+    fn solve(&self, file: &Path, part1: bool, part2: bool) -> Answer;
 }
 
 impl<T: Day> Solvable for T {
-    fn solve(&self, file: &Path) -> Answer {
+    fn solve(&self, file: &Path, part1: bool, part2: bool) -> Answer {
         let input = Self::process(file);
-        let part1 = Self::part1(&input);
-        let part2 = Self::part2(&input);
+        let part1 = if part1 {
+            Self::part1(&input)
+        } else {
+            String::from("")
+        };
+        let part2 = if part2 {
+            Self::part2(&input)
+        } else {
+            String::from("")
+        };
 
         Answer {
             part1: Some(part1),
