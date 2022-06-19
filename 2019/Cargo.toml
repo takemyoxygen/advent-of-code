@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 im = "15.1.0"
+itertools = "0.10.1"

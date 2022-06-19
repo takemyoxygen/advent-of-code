@@ -1,46 +1,22 @@
-use crate::utils::read_lines;
+use crate::intcode;
 use crate::solver::Day;
 use std::path::Path;
 
 pub struct Day2;
 
-type Program = Vec<usize>;
-
-fn process_instruction(program:&mut Program, pos: usize) -> bool {
-    match program[pos] {
-        1 => {
-            let dst = program[pos + 3];
-            program[dst] = program[program[pos + 1]] + program[program[pos + 2]];
-            true
-        },
-        2 => {
-            let dst = program[pos + 3];
-            program[dst] = program[program[pos + 1]] * program[program[pos + 2]];
-            true
-        }
-        _ => false
-    }
-}
-
-fn execute_program(input: &Program, noun: usize, verb: usize) -> usize {
+fn execute_program(input: &intcode::Program, noun: i32, verb: i32) -> i32 {
     let mut program = input.clone();
-    let mut pos = 0;
     program[1] = noun;
     program[2] = verb;
-    while process_instruction(&mut program, pos) {
-        pos += 4
-    }
-    program[0]
+    let result = intcode::run_program(&program, Vec::new()).ensure_terminated();
+    return result.program[0];
 }
 
 impl Day for Day2 {
-    type Intermediate = Program;
+    type Intermediate = intcode::Program;
 
     fn process(file: &Path) -> Self::Intermediate {
-        let line = read_lines(file).next().unwrap();
-        line.split(",")
-            .map(|token| str::parse::<usize>(token).unwrap())
-            .collect()
+        intcode::read_program(file)
     }
 
     fn part1(input: &Self::Intermediate) -> std::string::String {
