@@ -3,6 +3,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 
 mod solver;
 mod utils;
@@ -21,6 +22,7 @@ fn get_all_solvers() -> HashMap<u16, Box<dyn Solvable>> {
     solvers.insert(3, Box::new(day3::Day3) as Box<dyn Solvable>);
     solvers.insert(4, Box::new(day4::Day4) as Box<dyn Solvable>);
     solvers.insert(5, Box::new(day5::Day5) as Box<dyn Solvable>);
+    solvers.insert(6, Box::new(day6::Day6) as Box<dyn Solvable>);
 
     solvers
 }
