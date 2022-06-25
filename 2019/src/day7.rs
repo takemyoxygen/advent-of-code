@@ -4,7 +4,7 @@ use crate::{intcode, solver::Day};
 
 pub struct Day7;
 
-fn run_program_for_part1(program: &intcode::Program, seq: Vec<i32>) -> i32 {
+fn run_program_for_part1(program: &intcode::Program, seq: Vec<i64>) -> i64 {
     let mut input = 0;
 
     for i in 0..seq.len() {
@@ -15,7 +15,7 @@ fn run_program_for_part1(program: &intcode::Program, seq: Vec<i32>) -> i32 {
     return input;
 }
 
-fn run_program_for_part2(program: &intcode::Program, seq: Vec<i32>) -> i32 {
+fn run_program_for_part2(program: &intcode::Program, seq: Vec<i64>) -> i64 {
     let mut amplifiers = seq
         .iter()
         .map(|_| None)

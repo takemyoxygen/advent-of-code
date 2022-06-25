@@ -4,12 +4,12 @@ use std::path::Path;
 
 pub struct Day2;
 
-fn execute_program(input: &intcode::Program, noun: i32, verb: i32) -> i32 {
+fn execute_program(input: &intcode::Program, noun: i64, verb: i64) -> i64 {
     let mut program = input.clone();
     program[1] = noun;
     program[2] = verb;
     let result = intcode::run_program(&program, Vec::new()).ensure_terminated();
-    return result.program[0];
+    return *result.memory.get(&0).unwrap();
 }
 
 impl Day for Day2 {

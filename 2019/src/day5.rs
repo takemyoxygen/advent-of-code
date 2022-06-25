@@ -1,9 +1,12 @@
-use crate::{intcode, solver::Day};
+use crate::{
+    intcode::{self, Program},
+    solver::Day,
+};
 
 pub struct Day5;
 
 impl Day for Day5 {
-    type Intermediate = Vec<i32>;
+    type Intermediate = Program;
 
     fn process(file: &std::path::Path) -> Self::Intermediate {
         intcode::read_program(file)
