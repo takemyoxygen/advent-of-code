@@ -102,12 +102,6 @@ fn run_program_internal(
     input: Vec<i64>,
     source_relative_base: i64,
 ) -> ProgramResult {
-    // let mut pos = source_position;
-    // let mut relative_base = source_relative_base;
-    // let mut output = Vec::new();
-    // let mut input_iter = input.iter();
-    // let mut working_memory = memory;
-
     let mut state = ProgramState {
         input: input.iter(),
         memory: memory,
