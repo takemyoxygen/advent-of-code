@@ -3,7 +3,11 @@ use std::{
     vec,
 };
 
-use crate::{coord, intcode, solver::Day};
+use crate::{
+    coord::{self, VecXD},
+    intcode,
+    solver::Day,
+};
 
 pub type Colored = HashMap<coord::Vec2D, i64>;
 
@@ -25,7 +29,7 @@ fn run_robot(start: &coord::Vec2D, init_colors: &Colored, program: &intcode::Pro
                 } else {
                     coord::right(dir)
                 };
-                pos = coord::sum(&pos, dir);
+                pos = pos.add(dir)
             }
             _ => panic!(
                 "Robot should output exactly 2 numbers. Actual output: {:?}",
@@ -79,13 +83,13 @@ impl Day for Day11 {
     }
 
     fn part1(program: &Self::Intermediate) -> String {
-        run_robot(&coord::zero(), &HashMap::new(), program)
+        run_robot(&coord::Vec2D::zero(), &HashMap::new(), program)
             .len()
             .to_string()
     }
 
     fn part2(program: &Self::Intermediate) -> String {
-        let start = coord::zero();
+        let start = coord::Vec2D::zero();
         let mut init_colors = HashMap::new();
         init_colors.insert(start.clone(), 1);
         let colored = run_robot(&start, &init_colors, program);
