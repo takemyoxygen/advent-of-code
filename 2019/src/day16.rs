@@ -54,9 +54,8 @@ impl Day for Day16 {
 
     fn part2(input: &Self::Intermediate) -> String {
         let repeat = 10000;
-        let mut xs = repeat_n(input, repeat)
+        let mut xs = repeat_n(input, repeat / 2)
             .flatten()
-            .skip(input.len() * repeat / 2)
             .map(|x| *x)
             .collect::<Vec<_>>();
 

@@ -11,14 +11,16 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
-
-mod coord;
 mod day14;
 mod day15;
 mod day16;
+mod day17;
+
 mod intcode;
 mod solver;
 mod utils;
+mod coord;
+
 
 use std::collections::HashMap;
 use std::env;
@@ -45,6 +47,7 @@ fn get_all_solvers() -> HashMap<u16, Box<dyn Solvable>> {
     solvers.insert(14, Box::new(day14::Day14) as Box<dyn Solvable>);
     solvers.insert(15, Box::new(day15::Day15) as Box<dyn Solvable>);
     solvers.insert(16, Box::new(day16::Day16) as Box<dyn Solvable>);
+    solvers.insert(17, Box::new(day17::Day17) as Box<dyn Solvable>);
 
     solvers
 }
