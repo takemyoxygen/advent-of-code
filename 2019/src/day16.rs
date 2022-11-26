@@ -8,20 +8,6 @@ pub struct Day16;
 
 const BASE_PATTERN: [i32; 4] = [0, 1, 0, -1];
 
-struct Pattern {
-    calc_pos: usize,
-    pattern_offset: usize,
-    pattern_elements_taken: usize,
-}
-
-// impl Iterator for Pattern {
-//     type Item;
-
-//     fn next(&mut self) -> Option<Self::Item> {
-//         todo!()
-//     }
-// }
-
 fn pattern<'a>(pos: &'a usize) -> impl Iterator<Item = i32> + 'a {
     let chunks = BASE_PATTERN.iter().flat_map(|&d| repeat_n(d, *pos + 1));
     repeat(chunks).flatten().skip(1)
@@ -67,6 +53,25 @@ impl Day for Day16 {
     }
 
     fn part2(input: &Self::Intermediate) -> String {
-        todo!()
+        let repeat = 10000;
+        let mut xs = repeat_n(input, repeat)
+            .flatten()
+            .skip(input.len() * repeat / 2)
+            .map(|x| *x)
+            .collect::<Vec<_>>();
+
+        let offset = str::parse::<usize>(&input.iter().take(7).join("")).unwrap() - xs.len();
+
+        for _ in 0..100 {
+            let mut total = 0;
+            let mut next = vec![0; xs.len()];
+            for pos in (0..xs.len()).rev() {
+                total += xs[pos];
+                next[pos] = total % 10;
+            }
+            xs = next
+        }
+
+        xs.iter().skip(offset).take(8).join("")
     }
 }
