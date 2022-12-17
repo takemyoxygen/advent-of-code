@@ -120,30 +120,33 @@
 
 
 (defn next-state-part2 [monkey worry]
-  (let [worry' (quot ((monkey :op) worry) 3)
+  (let [worry' (into {} 
+          (map (fn [[base rem]] [base (mod ((monkey :op) rem) base)]) worry))
         [val t f] (monkey :test)   
-        next-monkey-idx (if (= 0 (mod worry' val)) t f)]
+        next-monkey-idx (if (= 0 (worry' val)) t f)]
     [next-monkey-idx worry']))
 
 
 (defn part2 [monkeys]
   (let [tests (map #(first (% :test)) monkeys)
         monkeys' 
-          (map 
+          (mapv 
             (fn [mk]
               (update mk :items 
                 (fn [items] 
-                  (map 
+                  (mapv 
                     (fn [item] (into {} (map (fn [tst] [tst (mod item tst)]) tests))) 
                     items)))) 
             monkeys)]
-        monkeys'))
+    (->> 
+      (reduce (fn [mk _] (round mk next-state-part2)) monkeys' (range 10000))
+      (map #(% :inspected))
+      (sort)
+      (reverse)
+      (take 2)
+      (apply *))))
 
-(part1 monkeys)
-
-(part2 test-monkeys)
-
-((into {} [[10 4] [4 1]]) 10)
-
-(mod 79 13)
+(println "Day 11")
+(println "Part 1:" (part1 monkeys))
+(println "Part 2:" (part2 monkeys))
 
