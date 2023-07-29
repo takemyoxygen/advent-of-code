@@ -37,15 +37,17 @@
 
 
 (defn part1 [items]
-  (let
-    [beacons (set (map :beacon items))
-     base 2000000
-     intervals (get-intervals base items)
-     start (apply min (map #(% 0) intervals))
-     end (apply max (map #(% 1) intervals))]
-    (->>
-      (range start (inc end))
-      (filter #(and (cannot-beacon? items [% base]) (not (contains? beacons [% base]))))
-      (count))))
-
+  (let [base      2000000
+        beacons   (set (map :beacon items))
+        intervals (sort (get-intervals base items))
+        at-base   (count (filter #(= base (% 1)) beacons))
+        [points]    (reduce
+                      (fn [[cnt prev-end] [start end]]
+                        (cond
+                          (>= prev-end end) [cnt prev-end]
+                          (<  prev-end start) [(+ cnt (- end start) 1) end]
+                          :else [(+ cnt (- end prev-end)) end]))
+                      [0 Integer/MIN_VALUE]
+                      intervals)]
+    (- points at-base)))
 
