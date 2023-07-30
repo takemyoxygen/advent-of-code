@@ -10,8 +10,6 @@ const STEPS: [(i32, i32); 4] = [(-1, 0), (1, 0), (0, 1), (0, -1)];
 
 type Map = Vec<Vec<char>>;
 
-type Edge = (String, String, usize, usize); //Start, End, weight, keymask
-
 fn find(map: &Map, expected: &char) -> Option<(usize, usize)> {
     for i in 0..map.len() {
         for j in 0..map[i].len() {
