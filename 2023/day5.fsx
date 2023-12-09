@@ -1,8 +1,8 @@
 #load "utils.fsx"
 
-open System
+open Utils
 
-let lines = Utils.readLines 5 false |> List.ofSeq
+let lines = Input.readLines 5 false |> List.ofSeq
 
 let seeds, maps =
   let seedsLine :: _ :: rest = lines

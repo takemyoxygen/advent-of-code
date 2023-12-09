@@ -1,8 +1,9 @@
 #load "utils.fsx"
 
 open System
+open Utils
 
-let lines = Utils.readLines 4 false
+let lines = Input.readLines 4 false
 
 let parse (line: string) =
   let [| _; nums |] = line.Split(": ")

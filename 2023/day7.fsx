@@ -1,8 +1,9 @@
 #load "utils.fsx"
 
 open System
+open Utils
 
-let lines = Utils.readLines 7 false
+let lines = Input.readLines 7 false
 
 let handTypes =
   [| [ 5 ]

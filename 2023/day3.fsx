@@ -2,12 +2,13 @@
 
 open System
 open System.Text.RegularExpressions
+open Utils
 
 type Num = { Start: int; Length: int; Value: int }
 
 let offsets = [ 0, 1; 0, -1; 1, 0; -1, 0; 1, 1; 1, -1; -1, 1; -1, -1 ]
 
-let input = Utils.readLines 3 false
+let input = Input.readLines 3 false
 
 let extractNumbers line =
   Regex.Matches(line, "\d+")

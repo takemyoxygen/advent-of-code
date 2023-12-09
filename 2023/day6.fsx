@@ -1,8 +1,9 @@
 #load "utils.fsx"
 
 open System
+open Utils
 
-let lines = Utils.readLines 6 false
+let lines = Input.readLines 6 false
 
 let solve a b c =
   let d = b * b - 4I * a * c

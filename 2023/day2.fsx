@@ -1,9 +1,11 @@
-open System
-open System.IO
-open System.Text.RegularExpressions
+#load "utils.fsx"
 
-let inputFile = Path.Combine(__SOURCE_DIRECTORY__, "input", "day2.txt")
-let lines = File.ReadLines(inputFile) |> List.ofSeq
+open System
+
+open System.Text.RegularExpressions
+open Utils
+
+let lines = Input.readLines 2 false |> List.ofArray
 
 type Game = int * Map<string, int> list
 

@@ -2,10 +2,11 @@
 
 open System
 open System.Text.RegularExpressions
+open Utils
 
 type NodeMap = Map<string, string * string>
 
-let lines = Utils.readLines 8 false |> List.ofArray
+let lines = Input.readLines 8 false |> List.ofArray
 
 let instructions, map =
   let instructions :: _ :: rest = lines

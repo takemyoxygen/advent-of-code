@@ -1,11 +1,9 @@
 #load "utils.fsx"
 
 open System
+open Utils
 
-module Seq =
-  let all pred xs = xs |> Seq.exists (pred >> not) |> not
-
-let lines = Utils.readLines 9 false
+let lines = Input.readLines 9 false
 
 let input =
   lines
