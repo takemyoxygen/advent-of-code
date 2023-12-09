@@ -37,42 +37,71 @@ let seeds, maps =
 
   seeds, maps
 
-let mapCategory x map =
-  let rec loop mappings =
-    match mappings with
-    | [] -> x
-    | (src, _, _) :: _ when x < src -> x
-    | (src, dest, length) :: _ when src <= x && x < src + length ->
-      dest + (x - src)
-    | _ :: rest -> loop rest
-
-  loop map
-
-let mapCategories maps x = List.fold mapCategory x maps
-
 let part1 () =
+  let mapCategory x map =
+    let rec loop mappings =
+      match mappings with
+      | [] -> x
+      | (src, _, _) :: _ when x < src -> x
+      | (src, dest, length) :: _ when src <= x && x < src + length ->
+        dest + (x - src)
+      | _ :: rest -> loop rest
+
+    loop map
+
+  let mapCategories maps x = List.fold mapCategory x maps
+
+
   seeds |> Seq.map (mapCategories maps) |> Seq.min
 
-// TODO: use better algorithm here, current bruteforce takes several hours to run
 let part2 () =
-  let mapRange start length maps =
+  let maps =
+    maps
+    |> List.map (
+      List.map (fun (start, dest, length) -> (start, start + length - 1I, dest))
+    )
 
-    let result =
-      seq { start .. start + length - (bigint 1) }
-      |> Seq.map (mapCategories maps)
-      |> Seq.min
+  let seedRanges =
+    seeds
+    |> Array.chunkBySize 2
+    |> Seq.map (fun [| start; length |] -> start, start + length - 1I)
+    |> List.ofSeq
 
-    result
+  let project mStart dest start finish =
+    let diff = start - mStart
+    let size = finish - start
+    let projectedStart = dest + diff
+    projectedStart, projectedStart + size
+
+  let mapInterval start finish mappings =
+    let rec loop start finish mappings results =
+      match mappings with
+      | _ when start > finish -> results
+      | [] -> (start, finish) :: results
+      | (mStart, _, _) :: _ when finish < mStart -> (start, finish) :: results
+      | (_, mFinish, _) :: rest when start > mFinish ->
+        loop start finish rest results
+      | (mStart, _, _) :: _ when start < mStart && mStart <= finish ->
+        (start, mStart - 1I) :: results |> loop mStart finish mappings
+      | (mStart, mFinish, dest) :: rest ->
+        let toMapStart, toMapFinish = start, min finish mFinish
+
+        (project mStart dest toMapStart toMapFinish) :: results
+        |> loop (toMapFinish + 1I) finish rest
+
+    loop start finish mappings List.empty |> List.rev
+
+  let mapAll start finish =
+    Seq.fold
+      (fun results mapping ->
+        List.collect (fun (st, fin) -> mapInterval st fin mapping) results)
+      [ start, finish ]
+      maps
 
 
-  let mapRangeAsync start length maps =
-    async { return mapRange start length maps }
-
-  seeds
-  |> Array.chunkBySize 2
-  |> Seq.map (fun [| start; length |] -> mapRangeAsync start length maps)
-  |> Async.Parallel
-  |> Async.RunSynchronously
+  seedRanges
+  |> Seq.collect (fun (st, fin) -> mapAll st fin)
+  |> Seq.map fst
   |> Seq.min
 
 
