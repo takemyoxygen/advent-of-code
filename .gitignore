@@ -21,3 +21,5 @@ __pycache__
 .calva
 .clj-kondo
 .lsp
+
+.vscode

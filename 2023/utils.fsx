@@ -15,3 +15,11 @@ module Input =
 
 module Seq =
   let all pred xs = xs |> Seq.exists (pred >> not) |> not
+
+module String =
+  let tryGet idx (s: string) =
+    if 0 <= idx && idx < s.Length then Some(s[idx]) else None
+
+module List =
+  let repeat n xs =
+    xs |> List.replicate n |> List.collect id
