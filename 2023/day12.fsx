@@ -17,7 +17,7 @@ let canHaveDamagedInterval (symbols: string) start size =
   if start + size > symbols.Length then
     false
   else
-    let nextSym = String.tryGet (start + size) symbols
+    let nextSym = String.tryAt (start + size) symbols
     let nextOp = symbols.IndexOf('.', start + 1)
 
     nextSym <> Some('#') && (nextOp = -1 || nextOp >= start + size)
@@ -27,7 +27,7 @@ let rec countArrangements (input: string) damages =
   let cache = new Dictionary<int * int list, bigint>()
 
   let rec loop start damages =
-    match String.tryGet start input, damages with
+    match String.tryAt start input, damages with
     | None, [] -> 1I
     | None, _ -> 0I
     | Some('.'), _ -> cacheLoop (start + 1) damages

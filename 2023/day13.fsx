@@ -18,8 +18,7 @@ let input =
 
     let result, rest = loop List.empty lines
 
-    result |> Seq.rev |> Seq.map _.ToCharArray() |> Array.ofSeq |> Grid.create,
-    rest
+    result |> Seq.rev |> Grid.ofLines, rest
 
   Seq.unfold
     (function
@@ -64,8 +63,7 @@ let reflectionWithSmudge g =
       for colIdx in seq { 0 .. Grid.columnsCount g - 1 } do
         yield
           Grid.updateWith
-            rowIdx
-            colIdx
+            { Row = rowIdx; Col = colIdx }
             (function
             | '.' -> '#'
             | _ -> '.')
