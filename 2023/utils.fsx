@@ -90,3 +90,6 @@ module Grid =
       |> Seq.mapi (fun colIdx x -> fmt x { Col = colIdx; Row = rowIdx })
       |> String.join "")
     |> String.join Environment.NewLine
+
+  let isWithin { Row = r; Col = c } (Grid content) =
+    0 <= r && r < content.Length && 0 <= c && c < content[r].Length
