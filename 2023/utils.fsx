@@ -93,3 +93,36 @@ module Grid =
 
   let isWithin { Row = r; Col = c } (Grid content) =
     0 <= r && r < content.Length && 0 <= c && c < content[r].Length
+
+
+
+type Direction =
+  | Left
+  | Right
+  | Up
+  | Down
+
+// directions in clockwise order
+let private steps =
+  [| Left, (-1, 0); Up, (0, -1); Right, (1, 0); Down, (0, 1) |]
+
+let private stepsMap = Map steps
+
+module Direction =
+  let move { Col = c; Row = r } dir =
+    let dc, dr = Map.find dir stepsMap
+    { Col = c + dc; Row = r + dr }
+
+  let private dirIndex dir =
+    let idx = Array.findIndex (fst >> ((=) dir)) steps
+
+    if idx < 0 then
+      invalidArg "dir" "Invalid direction"
+
+    idx
+
+  let clockwise dir =
+    steps[((dirIndex dir) + 1) % steps.Length] |> fst
+
+  let counterclockwise dir =
+    steps[((dirIndex dir) - 1 + steps.Length) % steps.Length] |> fst

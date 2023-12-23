@@ -4,18 +4,6 @@
 open FSharpx.Collections
 open Utils
 
-type Direction =
-  | Left
-  | Right
-  | Up
-  | Down
-
-let steps = Map [ Left, (-1, 0); Right, (1, 0); Up, (0, -1); Down, (0, 1) ]
-
-let move { Col = c; Row = r } dir =
-  let dc, dr = Map.find dir steps
-  { Col = c + dc; Row = r + dr }
-
 let grid = Input.readLines 16 false |> Grid.ofLines
 
 let canPassThrough dir sym =
@@ -40,41 +28,53 @@ let processBeam grid start direction =
     | Some(pos, sym, dir, queue') when Set.contains (pos, dir) visited ->
       loop visited queue'
     | Some(pos, sym, dir, queue') when canPassThrough dir sym ->
-      loop (Set.add (pos, dir) visited) (enqueue [ move pos dir, dir ] queue')
+      loop
+        (Set.add (pos, dir) visited)
+        (enqueue [ Direction.move pos dir, dir ] queue')
     | Some(pos, '/', Right, queue') ->
-      loop (Set.add (pos, Right) visited) (enqueue [ move pos Up, Up ] queue')
+      loop
+        (Set.add (pos, Right) visited)
+        (enqueue [ Direction.move pos Up, Up ] queue')
     | Some(pos, '/', Left, queue') ->
       loop
         (Set.add (pos, Left) visited)
-        (enqueue [ move pos Down, Down ] queue')
+        (enqueue [ Direction.move pos Down, Down ] queue')
     | Some(pos, '/', Up, queue') ->
       loop
         (Set.add (pos, Up) visited)
-        (enqueue [ move pos Right, Right ] queue')
+        (enqueue [ Direction.move pos Right, Right ] queue')
     | Some(pos, '/', Down, queue') ->
       loop
         (Set.add (pos, Down) visited)
-        (enqueue [ move pos Left, Left ] queue')
+        (enqueue [ Direction.move pos Left, Left ] queue')
     | Some(pos, '\\', Right, queue') ->
       loop
         (Set.add (pos, Right) visited)
-        (enqueue [ move pos Down, Down ] queue')
+        (enqueue [ Direction.move pos Down, Down ] queue')
     | Some(pos, '\\', Left, queue') ->
-      loop (Set.add (pos, Left) visited) (enqueue [ move pos Up, Up ] queue')
+      loop
+        (Set.add (pos, Left) visited)
+        (enqueue [ Direction.move pos Up, Up ] queue')
     | Some(pos, '\\', Down, queue') ->
       loop
         (Set.add (pos, Down) visited)
-        (enqueue [ move pos Right, Right ] queue')
+        (enqueue [ Direction.move pos Right, Right ] queue')
     | Some(pos, '\\', Up, queue') ->
-      loop (Set.add (pos, Up) visited) (enqueue [ move pos Left, Left ] queue')
+      loop
+        (Set.add (pos, Up) visited)
+        (enqueue [ Direction.move pos Left, Left ] queue')
     | Some(pos, '-', (Up | Down as dir), queue') ->
       loop
         (Set.add (pos, dir) visited)
-        (enqueue [ move pos Left, Left; move pos Right, Right ] queue')
+        (enqueue
+          [ Direction.move pos Left, Left; Direction.move pos Right, Right ]
+          queue')
     | Some(pos, '|', (Left | Right as dir), queue') ->
       loop
         (Set.add (pos, dir) visited)
-        (enqueue [ move pos Up, Up; move pos Down, Down ] queue')
+        (enqueue
+          [ Direction.move pos Up, Up; Direction.move pos Down, Down ]
+          queue')
     | Some(p) -> failwithf "Unrecognized pattern: %A" p
 
   loop Set.empty (Queue.ofList [ start, direction ]) |> Set.map fst |> Set.count
