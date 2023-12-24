@@ -109,9 +109,15 @@ let private steps =
 let private stepsMap = Map steps
 
 module Direction =
+  let all = steps |> Array.map fst
+
   let move { Col = c; Row = r } dir =
     let dc, dr = Map.find dir stepsMap
     { Col = c + dc; Row = r + dr }
+
+  let movex { Col = c; Row = r } dir n =
+    let dc, dr = Map.find dir stepsMap
+    { Col = c + dc * n; Row = r + dr * n }
 
   let private dirIndex dir =
     let idx = Array.findIndex (fst >> ((=) dir)) steps
@@ -126,3 +132,12 @@ module Direction =
 
   let counterclockwise dir =
     steps[((dirIndex dir) - 1 + steps.Length) % steps.Length] |> fst
+
+
+module Fun =
+  let repeat f init =
+    Seq.unfold
+      (fun curr ->
+        let next = f curr
+        Some(next, next))
+      init
