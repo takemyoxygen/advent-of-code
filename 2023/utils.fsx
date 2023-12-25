@@ -135,9 +135,25 @@ module Direction =
 
 
 module Fun =
-  let repeat f init =
+  let repeatSeq f init =
     Seq.unfold
       (fun curr ->
         let next = f curr
         Some(next, next))
       init
+
+  let repeatn f init times =
+    let rec loop interm cnt =
+      if cnt = times then interm else loop (f interm) (cnt + 1)
+
+    loop init 0
+
+
+module Num =
+  let rec gcd (a: bigint) (b: bigint) =
+    match (a, b) with
+    | (x, y) when x = y -> x
+    | (x, y) when x > y -> gcd (x - y) y
+    | (x, y) -> gcd x (y - x)
+
+  let lcm a b = a * b / (gcd a b)

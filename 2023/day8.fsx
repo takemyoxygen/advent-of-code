@@ -41,19 +41,11 @@ let part1 () =
 
 
 let part2 () =
-  let rec gcd a b =
-    match (a, b) with
-    | (x, y) when x = y -> x
-    | (x, y) when x > y -> gcd (x - y) y
-    | (x, y) -> gcd x (y - x)
-
-  let lcm a b = a * b / (gcd a b)
-
   map.Keys
   |> Seq.filter _.EndsWith('A')
   |> Seq.map (findSteps instructions map _.EndsWith('Z'))
   |> Seq.map bigint
-  |> Seq.fold lcm 1I
+  |> Seq.fold Num.lcm 1I
 
 
 printfn "Day 8"
