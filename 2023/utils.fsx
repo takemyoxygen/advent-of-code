@@ -157,3 +157,21 @@ module Num =
     | (x, y) -> gcd x (y - x)
 
   let lcm a b = a * b / (gcd a b)
+
+  // Euclidian remainer, always positive
+  let reme a b = ((a % b) + b) % b
+
+
+module Map =
+  let addOrUpdate update add key map =
+    let newval =
+      match Map.tryFind key map with
+      | Some(existing) -> update existing
+      | None -> add ()
+
+    Map.add key newval map
+
+  let combine f m1 m2 =
+    m1
+    |> Map.toSeq
+    |> Seq.fold (fun res (k, v) -> addOrUpdate (f v) (fun () -> v) k res) m2
