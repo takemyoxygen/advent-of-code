@@ -95,7 +95,6 @@ module Grid =
     0 <= r && r < content.Length && 0 <= c && c < content[r].Length
 
 
-
 type Direction =
   | Left
   | Right
@@ -175,3 +174,8 @@ module Map =
     m1
     |> Map.toSeq
     |> Seq.fold (fun res (k, v) -> addOrUpdate (f v) (fun () -> v) k res) m2
+
+
+[<AutoOpen>]
+module Common =
+  let minmax x1 x2 = (min x1 x2), (max x1 x2)
