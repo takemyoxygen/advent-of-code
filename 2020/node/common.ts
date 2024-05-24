@@ -7,3 +7,7 @@ export type Day<T> = {
 export function readNumbers(content: string): number[] {
   return content.split("\n").map(Number);
 }
+
+export function partNotImplemented<T>(input: T) {
+  return "Not implemented";
+}
