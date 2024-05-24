@@ -1,4 +1,4 @@
-import { partNotImplemented, type Day } from "./common";
+import { type Day } from "./common";
 import _ from "lodash";
 
 type Input = Array<[Policy, string]>;
