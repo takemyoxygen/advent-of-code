@@ -1,22 +1,14 @@
-import fs from "fs";
+type TInput = number[];
 
-export function parseInput(content) {
+export function parseInput(content: string): TInput {
   return content.split("\n").map(Number);
 }
 
-function readFile() {
-  const file = process.argv[2];
-  const content = fs.readFileSync(file, "utf-8");
-  return content.split("\n").map(Number);
-}
-
-// const input = readFile();
-
-export function part1(input) {
+export function part1(input: TInput) {
   input = input.toSorted((a, b) => a - b);
 
   let prev = 0;
-  const diffs = {};
+  const diffs: Record<number, number> = {};
   for (const jolt of input) {
     const diff = jolt - prev;
     diffs[diff] = (diffs[diff] ?? 0) + 1;
@@ -27,7 +19,7 @@ export function part1(input) {
   return diffs[1] * diffs[3];
 }
 
-export function part2(input) {
+export function part2(input: TInput) {
   input = [0, ...input].sort((a, b) => a - b);
   const results = new Array(input.length);
   results[results.length - 1] = 1;
@@ -45,6 +37,3 @@ export function part2(input) {
 
   return results[0];
 }
-
-// console.log("Part 1:", part1(input));
-// console.log("Part 2:", part2(input));
