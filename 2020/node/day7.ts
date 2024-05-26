@@ -1,6 +1,7 @@
 import { Queue } from "@datastructures-js/queue";
 import { partNotImplemented, type Day } from "./common";
 import _ from "lodash";
+import { bfs } from "./graph";
 
 type Edge = { qty: number; bag: string };
 type Graph = Record<string, Edge[]>;
@@ -41,24 +42,16 @@ const day7: Day<Graph> = {
   },
   part1(graph) {
     const reversed = reverse(graph);
-    const queue = new Queue<string>();
-    const visited = new Set();
+    const nodes = new Set<string>();
 
-    queue.enqueue("shiny gold");
-    while (queue.size() > 0) {
-      const bag = queue.dequeue();
-      if (visited.has(bag)) {
-        continue;
-      }
+    bfs(
+      "shiny gold",
+      (n) => (reversed[n] ?? []).map(({ bag }) => bag),
+      _.identity,
+      (n) => nodes.add(n)
+    );
 
-      visited.add(bag);
-
-      (reversed[bag] ?? [])
-        .filter((edge) => !visited.has(edge.bag))
-        .forEach((edge) => queue.enqueue(edge.bag));
-    }
-
-    return visited.size - 1;
+    return nodes.size - 1;
   },
   part2(graph) {
     const cache: Record<string, number> = {};
