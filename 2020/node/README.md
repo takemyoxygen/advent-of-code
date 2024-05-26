@@ -1,15 +1,15 @@
 # advent-of-code-2020
 
-To install dependencies:
+1. Install dependencies like
 
-```bash
+```
 bun install
 ```
 
-To run:
+2. Create file with puzzle input under `input` folder, e.g. `input/day10.txt`
 
-```bash
-bun run day10.js
+3. Run any day, for example
+
 ```
-
-This project was created using `bun init` in bun v1.1.9. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+bun run index.ts 10
+```
