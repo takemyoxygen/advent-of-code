@@ -1,6 +1,39 @@
 import { partNotImplemented, type Day } from "./common";
 import _ from "lodash";
 
+function gcdExt(a: bigint, b: bigint): [bigint, bigint, bigint] {
+  if (a === 0n) {
+    return [b, 0n, 1n];
+  }
+
+  const [gcd, x1, y1] = gcdExt(b % a, a);
+  const x = y1 - (b / a) * x1;
+  const y = x1;
+  return [gcd, x, y];
+}
+
+// returns a smallest positive number X such X % base = m
+function modpos(m: bigint, base: bigint): bigint {
+  let result = m;
+  while (result < 0) result += base;
+  return result;
+}
+
+// https://www.geeksforgeeks.org/euclidean-algorithms-basic-and-extended/
+// https://www.youtube.com/watch?v=ru7mWZJlRQg
+function chinese(nums: bigint[], rems: bigint[]): bigint {
+  const prod = nums.reduce((a, b) => a * b);
+  let result = 0n;
+
+  for (let i = 0; i < nums.length; i++) {
+    const prodI = prod / nums[i];
+    const [, invI] = gcdExt(prodI, nums[i]);
+    result += rems[i] * prodI * invI;
+  }
+
+  return modpos(result % prod, prod);
+}
+
 const day13: Day<[number, number[]]> = {
   parseInput(txt) {
     const [departure, buses] = txt.split("\n");
@@ -21,27 +54,19 @@ const day13: Day<[number, number[]]> = {
       .value();
   },
   part2([, buses]) {
-    const delays = buses
+    const [nums, rems] = buses
       .map((bus, delay) => [bus, delay] as const)
       .filter(([bus]) => !isNaN(bus))
-      .map(([bus, delay]) => [BigInt(bus), BigInt(delay)]);
+      .reduce<[bigint[], bigint[]]>(
+        ([nums, rems], [bus, delay]) => {
+          nums.push(BigInt(bus));
+          rems.push(BigInt(-delay));
+          return [nums, rems];
+        },
+        [[], []]
+      );
 
-    return delays;
-
-    const [step, offset] = _.maxBy(delays, ([bus]) => bus)!;
-    let t = step;
-
-    while (true) {
-      const normalizedT = t - offset;
-      if (
-        delays.every(
-          ([bus, delay]) => (normalizedT + delay) % bus === BigInt(0)
-        )
-      ) {
-        return normalizedT;
-      }
-      t += step;
-    }
+    return chinese(nums, rems).toString();
   },
 };
 
