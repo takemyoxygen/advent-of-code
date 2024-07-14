@@ -1,0 +1,17 @@
+(lang dune 3.16)
+
+(name aoc_2021)
+
+(generate_opam_files true)
+
+(authors "Vladimir Makarov")
+
+(maintainers "Vladimir Makarov")
+
+(package
+ (name aoc_2021)
+ (synopsis "Solutions for Advent of Code 2021")
+ (depends ocaml dune base)
+ )
+
+; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
