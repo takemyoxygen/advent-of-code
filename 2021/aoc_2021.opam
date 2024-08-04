@@ -8,6 +8,7 @@ depends: [
   "dune" {>= "3.16"}
   "base"
   "core"
+  "ppx_jane"
   "odoc" {with-doc}
 ]
 build: [

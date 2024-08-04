@@ -11,6 +11,6 @@
 (package
  (name aoc_2021)
  (synopsis "Solutions for Advent of Code 2021")
- (depends ocaml dune base core))
+ (depends ocaml dune base core ppx_jane))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html

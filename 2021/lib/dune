@@ -1,3 +1,5 @@
 (library
  (name aoc_2021)
- (libraries base stdio core str))
+ (libraries base stdio core str)
+ (preprocess
+  (pps ppx_jane)))
