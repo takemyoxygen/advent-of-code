@@ -24,16 +24,6 @@ let low_points grid =
             Some (Point.create col_idx row_idx, x)
           else None))
 
-let element_at grid point =
-  let row_idx, col_idx = (Point.y point, Point.x point) in
-  let row =
-    if row_idx >= 0 && row_idx < Array.length grid then Some grid.(row_idx)
-    else None
-  in
-  Option.bind row ~f:(fun row ->
-      if col_idx >= 0 && col_idx < Array.length row then Some row.(col_idx)
-      else None)
-
 let neighbors grid point =
   [
     Point.Direction.up;
@@ -43,7 +33,7 @@ let neighbors grid point =
   ]
   |> List.map ~f:(Point.move point)
   |> List.filter_map ~f:(fun pos ->
-         match element_at grid pos with
+         match Point.element_at grid pos with
          | Some 9 | None -> None
          | Some _ -> Some pos)
 
