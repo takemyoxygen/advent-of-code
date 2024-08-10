@@ -1,6 +1,0 @@
-(executable
- (public_name aoc_2021)
- (name main)
- (libraries base stdio core str)
- (preprocess
-  (pps ppx_jane)))
