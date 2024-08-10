@@ -1,10 +1,9 @@
 open Base
 
-type point = { x : int; y : int } [@@deriving compare, sexp_of, sexp, hash]
-
 module Point = struct
   module T = struct
-    type t = point [@@deriving compare, sexp_of, sexp, hash]
+    type t = { x : int; y : int }
+    [@@deriving compare, sexp_of, sexp, hash, fields]
   end
 
   include T
@@ -18,8 +17,6 @@ module Point = struct
 
   let zero = { x = 0; y = 0 }
   let create x y = { x; y }
-  let x { x; _ } = x
-  let y { y; _ } = y
   let move { x = x1; y = y1 } { x = x2; y = y2 } = { x = x1 + x2; y = y1 + y2 }
 
   let element_at grid point =
