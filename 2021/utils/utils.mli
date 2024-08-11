@@ -20,3 +20,7 @@ module Point : sig
   include Comparable.S with type t := t
   include Hashable.Key with type t := t
 end
+
+module ListEx : sig
+  val minmax : 'a list -> compare:('a -> 'a -> int) -> ('a * 'a) option
+end

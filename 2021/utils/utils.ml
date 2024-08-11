@@ -31,3 +31,10 @@ module Point = struct
   include Comparable.Make (T)
   include Core.Hashable.Make (T)
 end
+
+module ListEx = struct
+  let minmax xs ~compare =
+    let min = List.min_elt xs ~compare in
+    let max = List.max_elt xs ~compare in
+    Option.both min max
+end
