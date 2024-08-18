@@ -21,5 +21,5 @@ let solve cost =
   |> Sequence.min_elt ~compare:Int.compare
   |> Option.value_exn
 
-let part1 = solve simple_cost
-let part2 = solve progressive_cost
+let part1 () = solve simple_cost
+let part2 () = solve progressive_cost

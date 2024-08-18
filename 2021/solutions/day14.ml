@@ -76,5 +76,5 @@ let solve steps =
   in
   max - min
 
-let part1 = solve 10
-let part2 = solve 40
+let part1 () = solve 10
+let part2 () = solve 40

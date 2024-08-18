@@ -53,11 +53,11 @@ let bfs grid start =
   in
   loop ()
 
-let part1 =
+let part1 () =
   let lows = low_points input in
   Array.fold lows ~init:0 ~f:(fun acc (_, x) -> acc + x) + Array.length lows
 
-let part2 =
+let part2 () =
   low_points input |> Array.to_list
   |> List.map ~f:(fun (p, _) -> bfs input p |> List.length)
   |> List.sort ~compare:Int.descending

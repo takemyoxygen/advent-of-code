@@ -49,7 +49,7 @@ let score drawn board last_drawn =
   |> List.fold_left ( + ) 0
   |> fun sum -> sum * last_drawn
 
-let part1 =
+let part1 () =
   let rec play_until_first_winner prev to_draw drawn =
     match (get_winners drawn boards, to_draw, prev) with
     | ([], _), pick :: rest, _ ->
@@ -59,7 +59,7 @@ let part1 =
   in
   play_until_first_winner None draw IntSet.empty
 
-let part2 =
+let part2 () =
   let rec play_until_last_winner prev to_draw drawn boards =
     match (get_winners drawn boards, to_draw, prev) with
     | (_, losers), pick :: rest, _ when not (List.is_empty losers) ->

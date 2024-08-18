@@ -46,12 +46,12 @@ let find_paths ~can_go graph start dest =
   all_paths |> List.map ~f:List.rev
   |> List.dedup_and_sort ~compare:(List.compare String.compare)
 
-let part1 =
+let part1 () =
   find_paths graph "start" "end" ~can_go:(fun visited adj ->
       not (Map.mem visited adj))
   |> List.length
 
-let part2 =
+let part2 () =
   find_paths graph "start" "end" ~can_go:(fun visited adj ->
       match (adj, Map.find visited adj) with
       | ("start" | "end"), None -> true

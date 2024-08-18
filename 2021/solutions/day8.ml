@@ -69,7 +69,7 @@ let output_from (signals, outputs) =
   in
   List.fold ~init:0 ~f:(fun acc d -> (acc * 10) + d) indices
 
-let part1 =
+let part1 () =
   input
   |> List.concat_map ~f:(fun (_, output) -> output)
   |> List.filter ~f:(fun v ->
@@ -77,5 +77,5 @@ let part1 =
          len = 2 || len = 7 || len = 4 || len = 3)
   |> List.length
 
-let part2 =
+let part2 () =
   input |> List.map ~f:output_from |> List.reduce ~f:( + ) |> Option.value_exn

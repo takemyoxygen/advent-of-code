@@ -19,14 +19,14 @@ let apply folder =
   in
   final.depth * final.horizontal
 
-let part1 =
+let part1 () =
   apply (fun acc arg ->
       match arg with
       | Forward x -> { acc with horizontal = acc.horizontal + x }
       | Down x -> { acc with depth = acc.depth + x }
       | Up x -> { acc with depth = acc.depth - x })
 
-let part2 =
+let part2 () =
   apply (fun acc arg ->
       match arg with
       | Forward x ->

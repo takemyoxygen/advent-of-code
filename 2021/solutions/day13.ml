@@ -56,9 +56,9 @@ let minmax items =
   let max = List.max_elt ~compare:Int.compare items |> Option.value_exn in
   (min, max)
 
-let part1 = apply_fold initial_points (List.hd_exn folds) |> Set.length
+let part1 () = apply_fold initial_points (List.hd_exn folds) |> Set.length
 
-let part2 =
+let part2 () =
   let points =
     List.fold ~init:initial_points ~f:apply_fold folds |> Set.to_list
   in

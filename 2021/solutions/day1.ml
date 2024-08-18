@@ -15,8 +15,8 @@ let sums_of_3 xs =
 let num_of_increasing pairs =
   pairs |> Seq.filter (fun (x1, x2) -> x2 > x1) |> Seq.length
 
-let part1 = numbers |> pairwise |> num_of_increasing |> string_of_int
+let part1 () = numbers |> pairwise |> num_of_increasing |> string_of_int
 
-let part2 =
+let part2 () =
   numbers |> sums_of_3 |> List.of_seq |> pairwise |> num_of_increasing
   |> string_of_int

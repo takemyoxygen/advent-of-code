@@ -51,14 +51,14 @@ let step grid =
   in
   Hash_set.to_list flashed
 
-let part1 =
+let part1 () =
   let input = Array.copy_matrix input in
   List.range 0 100
   |> List.fold ~init:0 ~f:(fun acc _ ->
          let flashed = step input in
          acc + List.length flashed)
 
-let part2 =
+let part2 () =
   let input = Array.copy_matrix input in
   let size = List.length all_coords in
   let rec loop s =

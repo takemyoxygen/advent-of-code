@@ -43,12 +43,12 @@ let completion_score remainings =
        | _ -> assert false)
   |> List.fold ~init:0 ~f:(fun acc v -> (acc * 5) + v)
 
-let part1 =
+let part1 () =
   input |> List.map ~f:check_line
   |> List.filter_map ~f:(function Corrupted ch -> Some ch | _ -> None)
   |> List.map ~f:points |> List.reduce_exn ~f:( + )
 
-let part2 =
+let part2 () =
   let scores =
     input |> List.map ~f:check_line
     |> List.filter_map ~f:(function Incomplete rem -> Some rem | _ -> None)

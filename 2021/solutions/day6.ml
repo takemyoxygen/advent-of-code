@@ -28,5 +28,5 @@ let solve days =
   |> List.map ~f:(fishes_after days)
   |> List.reduce ~f:( + ) |> Option.value ~default:0
 
-let part1 = solve 80
-let part2 = solve 256
+let part1 () = solve 80
+let part2 () = solve 256

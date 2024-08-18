@@ -96,9 +96,9 @@ let solve segments =
   |> Sequence.fold ~init:(Set.empty (module Point)) ~f:incl
   |> Set.length
 
-let part1 =
+let part1 () =
   input
   |> List.filter ~f:(fun (p1, p2) -> P.x p1 = P.x p2 || P.y p1 = P.y p2)
   |> solve
 
-let part2 = solve input
+let part2 () = solve input

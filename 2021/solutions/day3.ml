@@ -15,7 +15,7 @@ let int_of_binary_string s = Printf.sprintf "0b%s" s |> int_of_string
 let int_of_binary_chars bits =
   bits |> List.to_seq |> String.of_seq |> int_of_binary_string
 
-let part1 =
+let part1 () =
   let gamma =
     Core.List.range 0 (List.hd input |> String.length)
     |> List.map (most_common input)
@@ -23,7 +23,7 @@ let part1 =
   let epsilon = List.map invert gamma in
   int_of_binary_chars gamma * int_of_binary_chars epsilon
 
-let part2 =
+let part2 () =
   let find_rating adjust_bit nums =
     let rec loop pos = function
       | [ x ] -> x
