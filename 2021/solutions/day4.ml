@@ -1,7 +1,6 @@
-let draw, boards =
+let read_input filename =
   let input =
-    Stdio.In_channel.read_all "./input/day4.txt"
-    |> Str.split (Str.regexp "\n\n")
+    Stdio.In_channel.read_all filename |> Str.split (Str.regexp "\n\n")
   in
   match input with
   | draw_text :: boards_text ->
@@ -49,22 +48,26 @@ let score drawn board last_drawn =
   |> List.fold_left ( + ) 0
   |> fun sum -> sum * last_drawn
 
-let part1 () =
-  let rec play_until_first_winner prev to_draw drawn =
-    match (get_winners drawn boards, to_draw, prev) with
-    | ([], _), pick :: rest, _ ->
-        play_until_first_winner (Some pick) rest (IntSet.add pick drawn)
-    | (winner :: _, _), _, Some prev -> score drawn winner prev
-    | _ -> failwith "Game over"
+let solve filename =
+  let draw, boards = read_input filename in
+  let part1 =
+    let rec play_until_first_winner prev to_draw drawn =
+      match (get_winners drawn boards, to_draw, prev) with
+      | ([], _), pick :: rest, _ ->
+          play_until_first_winner (Some pick) rest (IntSet.add pick drawn)
+      | (winner :: _, _), _, Some prev -> score drawn winner prev
+      | _ -> failwith "Game over"
+    in
+    play_until_first_winner None draw IntSet.empty
   in
-  play_until_first_winner None draw IntSet.empty
-
-let part2 () =
-  let rec play_until_last_winner prev to_draw drawn boards =
-    match (get_winners drawn boards, to_draw, prev) with
-    | (_, losers), pick :: rest, _ when not (List.is_empty losers) ->
-        play_until_last_winner (Some pick) rest (IntSet.add pick drawn) losers
-    | ([ winner ], []), _, Some prev -> score drawn winner prev
-    | _ -> failwith "Game over"
+  let part2 =
+    let rec play_until_last_winner prev to_draw drawn boards =
+      match (get_winners drawn boards, to_draw, prev) with
+      | (_, losers), pick :: rest, _ when not (List.is_empty losers) ->
+          play_until_last_winner (Some pick) rest (IntSet.add pick drawn) losers
+      | ([ winner ], []), _, Some prev -> score drawn winner prev
+      | _ -> failwith "Game over"
+    in
+    play_until_last_winner None draw IntSet.empty boards
   in
-  play_until_last_winner None draw IntSet.empty boards
+  (Some (string_of_int part1), Some (string_of_int part2))

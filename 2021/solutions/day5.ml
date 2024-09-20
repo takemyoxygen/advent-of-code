@@ -9,16 +9,6 @@ type segment = P.t * P.t
 type line = Vertical of int | Other of int * int
 type line_intersection = NoIntersection | Point of P.t | Overlap
 
-let input : segment list =
-  Stdio.In_channel.read_lines "./input/day5.txt"
-  |> List.map ~f:(fun line ->
-         String.split_on_chars ~on:[ ','; ' '; '-'; '>' ] line
-         |> List.filter ~f:(fun t -> not (String.is_empty t))
-         |> List.map ~f:int_of_string)
-  |> List.map ~f:(function
-       | [ x1; y1; x2; y2 ] -> (P.create x1 y1, P.create x2 y2)
-       | _ -> failwith "Invalid input format")
-
 let derive_line (p1, p2) =
   let x1, y1, x2, y2 = (P.x p1, P.y p1, P.x p2, P.y p2) in
   if x1 = x2 then Vertical x1
@@ -96,9 +86,22 @@ let solve segments =
   |> Sequence.fold ~init:(Set.empty (module Point)) ~f:incl
   |> Set.length
 
-let part1 () =
-  input
-  |> List.filter ~f:(fun (p1, p2) -> P.x p1 = P.x p2 || P.y p1 = P.y p2)
-  |> solve
+let solve filename =
+  let input : segment list =
+    Stdio.In_channel.read_lines filename
+    |> List.map ~f:(fun line ->
+           String.split_on_chars ~on:[ ','; ' '; '-'; '>' ] line
+           |> List.filter ~f:(fun t -> not (String.is_empty t))
+           |> List.map ~f:int_of_string)
+    |> List.map ~f:(function
+         | [ x1; y1; x2; y2 ] -> (P.create x1 y1, P.create x2 y2)
+         | _ -> failwith "Invalid input format")
+  in
+  let part1 =
+    input
+    |> List.filter ~f:(fun (p1, p2) -> P.x p1 = P.x p2 || P.y p1 = P.y p2)
+    |> solve
+  in
 
-let part2 () = solve input
+  let part2 = solve input in
+  (Some (string_of_int part1), Some (string_of_int part2))
