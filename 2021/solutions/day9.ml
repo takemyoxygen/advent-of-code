@@ -2,8 +2,8 @@ open! Base
 open Core
 open Utils
 
-let input =
-  Stdio.In_channel.read_lines "./input/day9.txt"
+let read_input filename =
+  Stdio.In_channel.read_lines filename
   |> List.map ~f:(fun line ->
          String.to_list line |> List.map ~f:Char.get_digit_exn |> Array.of_list)
   |> Array.of_list
@@ -11,15 +11,14 @@ let input =
 let low_points grid =
   Array.concat_mapi grid ~f:(fun row_idx row ->
       Array.filter_mapi row ~f:(fun col_idx x ->
-          let above = row_idx = 0 || input.(row_idx - 1).(col_idx) > x in
+          let above = row_idx = 0 || grid.(row_idx - 1).(col_idx) > x in
           let below =
-            row_idx = Array.length input - 1
-            || input.(row_idx + 1).(col_idx) > x
+            row_idx = Array.length grid - 1 || grid.(row_idx + 1).(col_idx) > x
           in
           let right =
-            col_idx = Array.length row - 1 || input.(row_idx).(col_idx + 1) > x
+            col_idx = Array.length row - 1 || grid.(row_idx).(col_idx + 1) > x
           in
-          let left = col_idx = 0 || input.(row_idx).(col_idx - 1) > x in
+          let left = col_idx = 0 || grid.(row_idx).(col_idx - 1) > x in
           if above && below && right && left then
             Some (Point.create col_idx row_idx, x)
           else None))
@@ -53,13 +52,17 @@ let bfs grid start =
   in
   loop ()
 
-let part1 () =
-  let lows = low_points input in
-  Array.fold lows ~init:0 ~f:(fun acc (_, x) -> acc + x) + Array.length lows
-
-let part2 () =
-  low_points input |> Array.to_list
-  |> List.map ~f:(fun (p, _) -> bfs input p |> List.length)
-  |> List.sort ~compare:Int.descending
-  |> (fun l -> List.take l 3)
-  |> List.fold ~init:1 ~f:( * )
+let solve filename =
+  let input = read_input filename in
+  let part1 =
+    let lows = low_points input in
+    Array.fold lows ~init:0 ~f:(fun acc (_, x) -> acc + x) + Array.length lows
+  in
+  let part2 =
+    low_points input |> Array.to_list
+    |> List.map ~f:(fun (p, _) -> bfs input p |> List.length)
+    |> List.sort ~compare:Int.descending
+    |> (fun l -> List.take l 3)
+    |> List.fold ~init:1 ~f:( * )
+  in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

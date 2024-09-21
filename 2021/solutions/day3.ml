@@ -40,4 +40,4 @@ let solve filename =
     let co2 = find_rating invert input in
     int_of_binary_string oxyg * int_of_binary_string co2
   in
-  (Some (string_of_int part1), Some (string_of_int part2))
+  (Some (Int.to_string part1), Some (Int.to_string part2))

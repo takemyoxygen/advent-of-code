@@ -2,12 +2,6 @@ open Base
 open Core
 open Utils
 
-let input =
-  Stdio.In_channel.read_lines "./input/day15.txt"
-  |> List.map ~f:(fun line ->
-         String.to_array line |> Array.map ~f:Char.get_digit_exn)
-  |> Array.of_list
-
 module Path = struct
   type t = int * Point.t [@@deriving compare]
 end
@@ -68,10 +62,18 @@ let extend xs =
          Array.map extended_right ~f:(fun row -> incr row step))
   |> Array.concat
 
-let solve grid =
+let solve_part grid =
   let start = Point.zero in
   let dest = Point.create (Array.length grid.(0) - 1) (Array.length grid - 1) in
   dijkstra grid start dest
 
-let part1 () = solve input
-let part2 () = input |> extend |> solve
+let solve filename =
+  let input =
+    Stdio.In_channel.read_lines filename
+    |> List.map ~f:(fun line ->
+           String.to_array line |> Array.map ~f:Char.get_digit_exn)
+    |> Array.of_list
+  in
+  let part1 = solve_part input in
+  let part2 = input |> extend |> solve_part in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

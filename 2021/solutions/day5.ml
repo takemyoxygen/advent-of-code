@@ -104,4 +104,4 @@ let solve filename =
   in
 
   let part2 = solve input in
-  (Some (string_of_int part1), Some (string_of_int part2))
+  (Some (Int.to_string part1), Some (Int.to_string part2))

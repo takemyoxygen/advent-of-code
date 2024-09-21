@@ -2,11 +2,8 @@ open! Base
 open! Core
 open! Utils
 
-let initial_points, folds =
-  match
-    Stdio.In_channel.read_all "./input/day13.txt"
-    |> Str.split (Str.regexp "\n\n")
-  with
+let read_input filename =
+  match Stdio.In_channel.read_all filename |> Str.split (Str.regexp "\n\n") with
   | [ coords_text; folds_text ] ->
       let coords =
         String.split_lines coords_text
@@ -56,23 +53,25 @@ let minmax items =
   let max = List.max_elt ~compare:Int.compare items |> Option.value_exn in
   (min, max)
 
-let part1 () = apply_fold initial_points (List.hd_exn folds) |> Set.length
-
-let part2 () =
-  let points =
-    List.fold ~init:initial_points ~f:apply_fold folds |> Set.to_list
+let solve filename =
+  let initial_points, folds = read_input filename in
+  let part1 = apply_fold initial_points (List.hd_exn folds) |> Set.length in
+  let part2 =
+    let points =
+      List.fold ~init:initial_points ~f:apply_fold folds |> Set.to_list
+    in
+    let min_x, max_x = points |> List.map ~f:Point.x |> minmax in
+    let min_y, max_y = points |> List.map ~f:Point.y |> minmax in
+    let grid =
+      Array.make_matrix ~dimx:(max_y - min_y + 1) ~dimy:(max_x - min_x + 1) ' '
+    in
+    let () =
+      List.iter points ~f:(fun p ->
+          grid.(Point.y p - min_y).(Point.x p - min_x) <- '#')
+    in
+    let grid_text =
+      grid |> Array.map ~f:String.of_array |> String.concat_array ~sep:"\n"
+    in
+    "\n" ^ grid_text
   in
-  let min_x, max_x = points |> List.map ~f:Point.x |> minmax in
-  let min_y, max_y = points |> List.map ~f:Point.y |> minmax in
-  let grid =
-    Array.make_matrix ~dimx:(max_y - min_y + 1) ~dimy:(max_x - min_x + 1) ' '
-  in
-  let () =
-    List.iter points ~f:(fun p ->
-        grid.(Point.y p - min_y).(Point.x p - min_x) <- '#')
-  in
-  let grid_text =
-    grid |> Array.map ~f:String.of_array |> String.concat_array ~sep:"\n"
-  in
-  let () = printf "%s\n" grid_text in
-  ()
+  (Some (Int.to_string part1), Some part2)

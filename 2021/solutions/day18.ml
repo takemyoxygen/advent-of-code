@@ -8,8 +8,6 @@ type node = {
   mutable value : number_part;
 }
 
-let lines = Stdio.In_channel.read_lines "./input/day18.txt"
-
 let line_to_linked_list line =
   String.to_list line
   |> List.filter ~f:(Char.( <> ) ',')
@@ -135,20 +133,26 @@ let sum_all nums =
       reduce sum_fst;
       (sum_fst, sum_lst))
 
-let part1 () =
-  let numbers = List.map lines ~f:line_to_linked_list in
-  let total, _ = sum_all numbers in
-  let tree = linked_list_to_tree total in
-  magnitude tree
-
-let part2 () =
-  let magnitude_of_sum line1 line2 =
-    let sum, _ = add (line_to_linked_list line1) (line_to_linked_list line2) in
-    reduce sum;
-    linked_list_to_tree sum |> magnitude
+let solve filename =
+  let lines = Stdio.In_channel.read_lines filename in
+  let part1 =
+    let numbers = List.map lines ~f:line_to_linked_list in
+    let total, _ = sum_all numbers in
+    let tree = linked_list_to_tree total in
+    magnitude tree
   in
-  List.cartesian_product lines lines
-  |> List.filter ~f:(fun (l1, l2) -> String.(l1 <> l2))
-  |> List.map ~f:(fun (l1, l2) -> magnitude_of_sum l1 l2)
-  |> List.max_elt ~compare:Int.compare
-  |> Option.value_exn
+  let part2 =
+    let magnitude_of_sum line1 line2 =
+      let sum, _ =
+        add (line_to_linked_list line1) (line_to_linked_list line2)
+      in
+      reduce sum;
+      linked_list_to_tree sum |> magnitude
+    in
+    List.cartesian_product lines lines
+    |> List.filter ~f:(fun (l1, l2) -> String.(l1 <> l2))
+    |> List.map ~f:(fun (l1, l2) -> magnitude_of_sum l1 l2)
+    |> List.max_elt ~compare:Int.compare
+    |> Option.value_exn
+  in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

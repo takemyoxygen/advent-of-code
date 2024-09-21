@@ -1,7 +1,6 @@
 open Base
 open Core
 
-let input = Stdio.In_channel.read_lines "./input/day10.txt"
 let open_to_close = [ ('(', ')'); ('[', ']'); ('{', '}'); ('<', '>') ]
 let close_to_open = List.Assoc.inverse open_to_close
 let is_opening ch = List.Assoc.mem open_to_close ch ~equal:Char.equal
@@ -43,17 +42,21 @@ let completion_score remainings =
        | _ -> assert false)
   |> List.fold ~init:0 ~f:(fun acc v -> (acc * 5) + v)
 
-let part1 () =
-  input |> List.map ~f:check_line
-  |> List.filter_map ~f:(function Corrupted ch -> Some ch | _ -> None)
-  |> List.map ~f:points |> List.reduce_exn ~f:( + )
-
-let part2 () =
-  let scores =
+let solve filename =
+  let input = Stdio.In_channel.read_lines filename in
+  let part1 =
     input |> List.map ~f:check_line
-    |> List.filter_map ~f:(function Incomplete rem -> Some rem | _ -> None)
-    |> List.map ~f:completion_score
-    |> List.sort ~compare:Int.compare
-    |> Array.of_list
+    |> List.filter_map ~f:(function Corrupted ch -> Some ch | _ -> None)
+    |> List.map ~f:points |> List.reduce_exn ~f:( + )
   in
-  scores.(Array.length scores / 2)
+  let part2 =
+    let scores =
+      input |> List.map ~f:check_line
+      |> List.filter_map ~f:(function Incomplete rem -> Some rem | _ -> None)
+      |> List.map ~f:completion_score
+      |> List.sort ~compare:Int.compare
+      |> Array.of_list
+    in
+    scores.(Array.length scores / 2)
+  in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

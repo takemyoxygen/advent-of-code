@@ -1,8 +1,8 @@
 open Base
 open Core
 
-let input =
-  Stdio.In_channel.read_lines "./input/day8.txt"
+let read_input filename =
+  Stdio.In_channel.read_lines filename
   |> List.map ~f:(fun line ->
          let parts =
            Str.split (Str.regexp " | ") line
@@ -69,13 +69,17 @@ let output_from (signals, outputs) =
   in
   List.fold ~init:0 ~f:(fun acc d -> (acc * 10) + d) indices
 
-let part1 () =
-  input
-  |> List.concat_map ~f:(fun (_, output) -> output)
-  |> List.filter ~f:(fun v ->
-         let len = String.length v in
-         len = 2 || len = 7 || len = 4 || len = 3)
-  |> List.length
-
-let part2 () =
-  input |> List.map ~f:output_from |> List.reduce ~f:( + ) |> Option.value_exn
+let solve filename =
+  let input = read_input filename in
+  let part1 =
+    input
+    |> List.concat_map ~f:(fun (_, output) -> output)
+    |> List.filter ~f:(fun v ->
+           let len = String.length v in
+           len = 2 || len = 7 || len = 4 || len = 3)
+    |> List.length
+  in
+  let part2 =
+    input |> List.map ~f:output_from |> List.reduce ~f:( + ) |> Option.value_exn
+  in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

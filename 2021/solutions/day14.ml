@@ -12,11 +12,11 @@ module MemoKey = struct
   type t = int * char * char [@@deriving sexp_of, sexp, hash, compare]
 end
 
-let template, replacement_rules =
+let read_input filename =
   let as_two_chars str =
     match String.to_list str with [ c1; c2 ] -> (c1, c2) | _ -> assert false
   in
-  match Stdio.In_channel.read_lines "./input/day14.txt" with
+  match Stdio.In_channel.read_lines filename with
   | template :: _ :: rules_lines ->
       let rules =
         List.map rules_lines ~f:(fun line ->
@@ -44,7 +44,7 @@ let merge c1 c2 =
       | `Both (l, r) -> Some (l + r)
       | `Left x | `Right x -> Some x)
 
-let find_counts =
+let make_find_counts replacement_rules =
   let memo = Hashtbl.create (module MemoKey) in
   let rec f_inner steps_left ((c1, c2) as pair) =
     match (steps_left, Map.find replacement_rules pair) with
@@ -59,7 +59,7 @@ let find_counts =
   in
   f_memo
 
-let solve steps =
+let solve_part template find_counts steps =
   let chars = String.to_list template in
   let pairs = pairs_in chars in
   let counts_inner =
@@ -76,5 +76,9 @@ let solve steps =
   in
   max - min
 
-let part1 () = solve 10
-let part2 () = solve 40
+let solve filename =
+  let template, replacement_rules = read_input filename in
+  let find_count = make_find_counts replacement_rules in
+  let part1 = solve_part template find_count 10 in
+  let part2 = solve_part template find_count 40 in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

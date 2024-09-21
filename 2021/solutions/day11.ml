@@ -1,12 +1,6 @@
 open Base
 open Utils
 
-let input =
-  Stdio.In_channel.read_lines "./input/day11.txt"
-  |> List.map ~f:(fun line ->
-         String.to_array line |> Array.map ~f:Char.get_digit_exn)
-  |> Array.of_list
-
 let offsets =
   let d = [ -1; 0; 1 ] in
   List.cartesian_product d d
@@ -20,17 +14,17 @@ let neighbors grid pos =
          | Some _ -> Some neigh
          | _ -> None)
 
-let all_coords =
+let all_coords input =
   let rows = List.range 0 (Array.length input) in
   let cols = List.range 0 (Array.length input.(0)) in
   List.cartesian_product rows cols
   |> List.map ~f:(fun (y, x) -> Point.create x y)
 
-let step grid =
+let step all grid =
   let flashed = Hash_set.create (module Point) in
   let bump_queue = Queue.create () in
   let enqueue = List.iter ~f:(Queue.enqueue bump_queue) in
-  let () = enqueue all_coords in
+  let () = enqueue all in
   let rec loop () =
     match Queue.dequeue bump_queue with
     | None -> ()
@@ -51,17 +45,27 @@ let step grid =
   in
   Hash_set.to_list flashed
 
-let part1 () =
-  let input = Array.copy_matrix input in
-  List.range 0 100
-  |> List.fold ~init:0 ~f:(fun acc _ ->
-         let flashed = step input in
-         acc + List.length flashed)
-
-let part2 () =
-  let input = Array.copy_matrix input in
-  let size = List.length all_coords in
-  let rec loop s =
-    if step input |> List.length = size then s else loop (s + 1)
+let solve filename =
+  let input =
+    Stdio.In_channel.read_lines filename
+    |> List.map ~f:(fun line ->
+           String.to_array line |> Array.map ~f:Char.get_digit_exn)
+    |> Array.of_list
   in
-  loop 1
+  let all = all_coords input in
+  let part1 =
+    let input = Array.copy_matrix input in
+    List.range 0 100
+    |> List.fold ~init:0 ~f:(fun acc _ ->
+           let flashed = step all input in
+           acc + List.length flashed)
+  in
+  let part2 =
+    let input = Array.copy_matrix input in
+    let size = List.length all in
+    let rec loop s =
+      if step all input |> List.length = size then s else loop (s + 1)
+    in
+    loop 1
+  in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

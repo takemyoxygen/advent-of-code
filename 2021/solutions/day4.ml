@@ -70,4 +70,4 @@ let solve filename =
     in
     play_until_last_winner None draw IntSet.empty boards
   in
-  (Some (string_of_int part1), Some (string_of_int part2))
+  (Some (Int.to_string part1), Some (Int.to_string part2))

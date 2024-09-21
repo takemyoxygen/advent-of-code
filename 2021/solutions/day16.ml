@@ -6,8 +6,6 @@ type operator_type = Sum | Product | Min | Max | Gt | Lt | Eq
 type packet = { version : int; content : packet_content }
 and packet_content = Literal of int | Operator of operator_type * packet list
 
-let input = Stdio.In_channel.read_all "./input/day16.txt"
-
 let mapping =
   [
     ('0', [ 0; 0; 0; 0 ]);
@@ -124,12 +122,17 @@ let rec eval packet =
       | Eq, [ fst; snd ] -> if fst = snd then 1 else 0
       | _ -> assert false)
 
-let part1 () =
-  let bits = hex_to_binary input in
-  let packet, _ = parse_packet bits in
-  sum_versions packet
+let solve filename =
+  let input = Stdio.In_channel.read_all filename in
 
-let part2 () =
-  let bits = hex_to_binary input in
-  let packet, _ = parse_packet bits in
-  eval packet
+  let part1 =
+    let bits = hex_to_binary input in
+    let packet, _ = parse_packet bits in
+    sum_versions packet
+  in
+  let part2 =
+    let bits = hex_to_binary input in
+    let packet, _ = parse_packet bits in
+    eval packet
+  in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

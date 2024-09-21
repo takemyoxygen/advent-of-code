@@ -17,11 +17,11 @@ let solve filename =
     Stdio.In_channel.read_lines filename |> List.map int_of_string
   in
 
-  let part1 = numbers |> pairwise |> num_of_increasing |> string_of_int in
+  let part1 = numbers |> pairwise |> num_of_increasing |> Int.to_string in
 
   let part2 =
     numbers |> sums_of_3 |> List.of_seq |> pairwise |> num_of_increasing
-    |> string_of_int
+    |> Int.to_string
   in
 
   (Some part1, Some part2)

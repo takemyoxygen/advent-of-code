@@ -1,10 +1,6 @@
 open Base
 open Core
 
-let initial =
-  Stdio.In_channel.read_all "./input/day6.txt"
-  |> String.split ~on:',' |> List.map ~f:Int.of_string
-
 let fishes_after =
   let memo =
     Hashtbl.create
@@ -23,10 +19,16 @@ let fishes_after =
   in
   loop
 
-let solve days =
+let solve_part initial days =
   initial
   |> List.map ~f:(fishes_after days)
   |> List.reduce ~f:( + ) |> Option.value ~default:0
 
-let part1 () = solve 80
-let part2 () = solve 256
+let solve filename =
+  let initial =
+    Stdio.In_channel.read_all filename
+    |> String.split ~on:',' |> List.map ~f:Int.of_string
+  in
+  let part1 = solve_part initial 80 in
+  let part2 = solve_part initial 256 in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

@@ -42,28 +42,31 @@ let y_time ~vy ~y_min ~y_max =
 
 let x_dist ~vx ~t = progression_sum ~initial:vx ~delta:(-1) ~n:(min t vx)
 
-let part1 () =
-  let min_y, _ = ys in
-  let vy = -min_y - 1 in
-  progression_sum ~initial:1 ~delta:1 ~n:vy
-
-let part2 () =
-  let x_min, x_max = xs in
-  let y_min, y_max = ys in
-  let vy_min = y_min in
-  let vy_max = -y_min in
-  let vx_min = 1 in
-  let vx_max = x_max in
-  let within_x x = x_min <= x && x <= x_max in
-  let vxs = List.range ~stop:`inclusive vx_min vx_max in
-  let vys = List.range ~stop:`inclusive vy_min vy_max in
-  List.bind vys ~f:(fun vy ->
-      match y_time ~vy ~y_min ~y_max with
-      | None -> []
-      | Some (t_min, t_max) ->
-          let times = Sequence.range ~stop:`inclusive t_min t_max in
-          vxs
-          |> List.filter ~f:(fun vx ->
-                 Sequence.exists times ~f:(fun t -> x_dist ~vx ~t |> within_x))
-          |> List.map ~f:(fun vx -> (vx, vy)))
-  |> List.length
+let solve _ =
+  let part1 =
+    let min_y, _ = ys in
+    let vy = -min_y - 1 in
+    progression_sum ~initial:1 ~delta:1 ~n:vy
+  in
+  let part2 =
+    let x_min, x_max = xs in
+    let y_min, y_max = ys in
+    let vy_min = y_min in
+    let vy_max = -y_min in
+    let vx_min = 1 in
+    let vx_max = x_max in
+    let within_x x = x_min <= x && x <= x_max in
+    let vxs = List.range ~stop:`inclusive vx_min vx_max in
+    let vys = List.range ~stop:`inclusive vy_min vy_max in
+    List.bind vys ~f:(fun vy ->
+        match y_time ~vy ~y_min ~y_max with
+        | None -> []
+        | Some (t_min, t_max) ->
+            let times = Sequence.range ~stop:`inclusive t_min t_max in
+            vxs
+            |> List.filter ~f:(fun vx ->
+                   Sequence.exists times ~f:(fun t -> x_dist ~vx ~t |> within_x))
+            |> List.map ~f:(fun vx -> (vx, vy)))
+    |> List.length
+  in
+  (Some (Int.to_string part1), Some (Int.to_string part2))

@@ -27,7 +27,7 @@ let solve filename =
         | Forward x -> { acc with horizontal = acc.horizontal + x }
         | Down x -> { acc with depth = acc.depth + x }
         | Up x -> { acc with depth = acc.depth - x })
-    |> string_of_int
+    |> Int.to_string
   in
   let part2 =
     apply instructions (fun acc arg ->
@@ -40,6 +40,6 @@ let solve filename =
             }
         | Down x -> { acc with aim = acc.aim + x }
         | Up x -> { acc with aim = acc.aim - x })
-    |> string_of_int
+    |> Int.to_string
   in
   (Some part1, Some part2)
