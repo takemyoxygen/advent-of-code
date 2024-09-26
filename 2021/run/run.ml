@@ -1,3 +1,4 @@
+open Base
 open Core
 open Solutions
 
@@ -25,6 +26,7 @@ let solutions : (module Day) array =
     (module Day16);
     (module Day17);
     (module Day18);
+    (module Day19);
   |]
 
 let print day (module D : Day) input_file =
@@ -51,6 +53,10 @@ let command =
      fun () ->
        let input_file = determine_input_file day is_test input in
        let sln = solutions.(day - 1) in
-       print day sln input_file)
+       let start = Time_now.nanosecond_counter_for_timing () in
+       print day sln input_file;
+       let fin = Time_now.nanosecond_counter_for_timing () in
+       let elapsed = Int63.(to_float (fin - start)) in
+       printf "Elapsed time: %f sec\n" Float.(elapsed / 1000000000.0))
 
 let () = Command_unix.run command

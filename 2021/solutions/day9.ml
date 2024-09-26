@@ -37,20 +37,7 @@ let neighbors grid point =
          | Some _ -> Some pos)
 
 let bfs grid start =
-  let visited = Hash_set.create (module Point) in
-  let queue = Queue.create () in
-  let () = Queue.enqueue queue start in
-  let rec loop () =
-    if Queue.is_empty queue then visited |> Hash_set.to_list
-    else
-      let p = Queue.dequeue_exn queue in
-      if Hash_set.mem visited p then loop ()
-      else
-        let () = Hash_set.add visited p in
-        let () = neighbors grid p |> List.iter ~f:(Queue.enqueue queue) in
-        loop ()
-  in
-  loop ()
+  Graph.bfs (module Point) ~start ~adjacent:(fun p _ -> neighbors grid p)
 
 let solve filename =
   let input = read_input filename in

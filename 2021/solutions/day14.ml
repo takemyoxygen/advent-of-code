@@ -71,7 +71,7 @@ let solve_part template find_counts steps =
   let min, max =
     Map.to_alist counts
     |> List.map ~f:(fun (_, v) -> v)
-    |> ListEx.minmax ~compare:Int.compare
+    |> List_ex.minmax ~compare:Int.compare
     |> Option.value_exn
   in
   max - min
