@@ -27,6 +27,7 @@ let solutions : (module Day) array =
     (module Day17);
     (module Day18);
     (module Day19);
+    (module Day20);
   |]
 
 let print day (module D : Day) input_file =
