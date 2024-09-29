@@ -2,17 +2,6 @@ open Base
 open Core
 open Utils
 
-module Vec3 = struct
-  type t = int * int * int [@@deriving sexp, hash, compare]
-
-  let distance (x1, y1, z1) (x2, y2, z2) = (x1 - x2, y1 - y2, z1 - z2)
-  let to_abs ~origin:(x, y, z) (dx, dy, dz) = (x + dx, y + dy, z + dz)
-  let zero = (0, 0, 0)
-
-  let manhattan (x1, y1, z1) (x2, y2, z2) =
-    abs (x1 - x2) + abs (y1 - y2) + abs (z1 - z2)
-end
-
 module Orientation = struct
   type axis = X | Y | Z [@@deriving compare]
   type dir = Pos | Neg [@@deriving compare]
