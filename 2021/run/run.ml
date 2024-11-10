@@ -6,31 +6,33 @@ module type Day = sig
   val solve : string -> string option * string option
 end
 
-let solutions : (module Day) array =
-  [|
-    (module Day1);
-    (module Day2);
-    (module Day3);
-    (module Day4);
-    (module Day5);
-    (module Day6);
-    (module Day7);
-    (module Day8);
-    (module Day9);
-    (module Day10);
-    (module Day11);
-    (module Day12);
-    (module Day13);
-    (module Day14);
-    (module Day15);
-    (module Day16);
-    (module Day17);
-    (module Day18);
-    (module Day19);
-    (module Day20);
-    (module Day21);
-    (module Day22);
-  |]
+let solutions : (module Day) Int.Map.t =
+  [
+    (1, (module Day1 : Day));
+    (2, (module Day2));
+    (3, (module Day3));
+    (4, (module Day4));
+    (5, (module Day5));
+    (6, (module Day6));
+    (7, (module Day7));
+    (8, (module Day8));
+    (9, (module Day9));
+    (10, (module Day10));
+    (11, (module Day11));
+    (12, (module Day12));
+    (13, (module Day13));
+    (14, (module Day14));
+    (15, (module Day15));
+    (16, (module Day16));
+    (17, (module Day17));
+    (18, (module Day18));
+    (19, (module Day19));
+    (20, (module Day20));
+    (21, (module Day21));
+    (22, (module Day22));
+    (25, (module Day25));
+  ]
+  |> Map.of_alist_exn (module Int)
 
 let print day (module D : Day) input_file =
   let p1, p2 = D.solve input_file in
@@ -55,7 +57,7 @@ let command =
      in
      fun () ->
        let input_file = determine_input_file day is_test input in
-       let sln = solutions.(day - 1) in
+       let sln = Map.find_exn solutions day in
        let start = Time_now.nanosecond_counter_for_timing () in
        print day sln input_file;
        let fin = Time_now.nanosecond_counter_for_timing () in
