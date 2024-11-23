@@ -1,9 +1,8 @@
 open Base
 open Core
-open Utils
 
 type range = { xs : int * int; ys : int * int; zs : int * int }
-[@@deriving sexp_of]
+[@@deriving sexp_of, equal]
 
 let find_all str regex =
   let[@alert "-deprecated"] rec loop pos acc =
@@ -40,108 +39,73 @@ let read_input filename =
 let range_to_str { xs = x1, x2; ys = y1, y2; zs = z1, z2 } =
   sprintf "x=%d..%d, y=%d..%d, z=%d..%d" x1 x2 y1 y2 z1 z2
 
-let all_points range =
-  let open Sequence.Let_syntax in
-  let seq (p1, p2) = Sequence.range ~stop:`inclusive p1 p2 in
-  let%bind x = seq range.xs in
-  let%bind y = seq range.ys in
-  let%map z = seq range.zs in
-  (x, y, z)
-
 let within_bounds input =
   let in_range (p1, p2) = -50 <= p1 && p1 <= 50 && -50 <= p2 && p2 <= 50 in
   List.filter input ~f:(fun (_, range) ->
       in_range range.xs && in_range range.ys && in_range range.ys)
 
-let part1 () =
-  let input = read_input "./input/day22.txt" |> within_bounds in
-  let on = Hash_set.create (module Vec3) in
-  let turn_on p = Hash_set.add on p in
-  let turn_off p = Hash_set.remove on p in
-  input
-  |> List.iter ~f:(fun (state, range) ->
-         let f = match state with `on -> turn_on | `off -> turn_off in
-         all_points range |> Sequence.iter ~f);
-  Hash_set.length on
-
-let split_one_dim (p1, p2) =
-  if p1 = p2 then [ (p1, p2) ]
-  else if p2 - p1 = 1 then [ (p1, p1); (p2, p2) ]
-  else
-    let mid = (p1 + p2) / 2 in
-    [ (p1, mid); (mid + 1, p2) ]
-
-let split_range range =
-  let open List.Let_syntax in
-  let%bind xs = split_one_dim range.xs in
-  let%bind ys = split_one_dim range.ys in
-  let%map zs = split_one_dim range.zs in
-  { xs; ys; zs }
-
-let bounding_range ranges =
-  let minmax f =
-    ranges
-    |> List.bind ~f:(fun r ->
-           let p1, p2 = f r in
-           [ p1; p2 ])
-    |> List_ex.minmax ~compare:Int.compare
-    |> Option.value_exn
-  in
-  let xs = minmax (fun r -> r.xs) in
-  let ys = minmax (fun r -> r.ys) in
-  let zs = minmax (fun r -> r.zs) in
-  { xs; ys; zs }
-
-let overlap r1 r2 =
-  let within (p11, p12) (p21, p22) = p11 <= p21 && p12 >= p22 in
-  let partial (p11, p12) (p21, p22) = not (p12 < p21 || p11 > p22) in
-  if within r1.xs r2.xs && within r1.ys r2.ys && within r1.zs r2.zs then `within
-  else if partial r1.xs r2.xs && partial r1.ys r2.ys && partial r1.zs r2.zs then
-    `partial
-  else `no_overlap
-
-let find_containing_step range steps =
-  let rec loop range steps =
-    match steps with
-    | [] -> `no_overlap
-    | (state, step_range) :: rest as current -> (
-        match overlap step_range range with
-        | `within ->
-            (* printf "Area %s is within %s\n" (range_to_str range)
-               (range_to_str step_range); *)
-            `defined state
-        | `partial ->
-            (* printf "Area %s partially overlaps with %s\n" (range_to_str range)
-               (range_to_str step_range); *)
-            `partial current
-        | `no_overlap -> loop range rest)
-  in
-  loop range steps
-
 let volume { xs = x1, x2; ys = y1, y2; zs = z1, z2 } =
   (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1)
 
-let part2 filename =
-  let input = read_input filename in
-  let input_rev = List.rev input in
-  (* let boundary = { xs = (-50, 50); ys = (-50, 50); zs = (-50, 50) } in *)
-  let boundary = input |> List.map ~f:snd |> bounding_range in
-  let rec loop steps range =
-    match find_containing_step range steps with
-    | `defined `off | `no_overlap -> 0
-    | `defined `on -> volume range
-    | `partial steps ->
-        split_range range |> List.sum (module Int) ~f:(loop steps)
+let overlap_1d (a1, a2) (b1, b2) = not (b1 > a2 || b2 < a1)
+
+let split_range_1d ((a1, a2) as a) ((b1, b2) as b) =
+  let in_a x = a1 <= x && x <= a2 in
+  let ranges =
+    if not (overlap_1d a b) then []
+    else
+      let nexts = List.sort [ a2; b1 - 1; b2 ] ~compare:Int.compare in
+      let rec loop start nexts acc =
+        if in_a start then
+          match List.filter nexts ~f:(fun n -> n >= start) with
+          | [] -> acc
+          | end_ :: rest -> loop (end_ + 1) rest ((start, end_) :: acc)
+        else acc
+      in
+      loop a1 nexts []
   in
-  loop input_rev boundary
+  ranges
+  |> List.filter ~f:(fun (x1, x2) -> x1 <= x2)
+  |> List.sort ~compare:[%compare: int * int]
+
+let overlaps_1d ranges range = List.filter ranges ~f:(overlap_1d range)
+
+let split_dim a b =
+  let splits = split_range_1d a b in
+  let overlaps = overlaps_1d splits b in
+  (splits, List.hd overlaps)
+
+let subtract (cuboid1 : range) (cuboid2 : range) =
+  let xs, split_x = split_dim cuboid1.xs cuboid2.xs
+  and ys, split_y = split_dim cuboid1.ys cuboid2.ys
+  and zs, split_z = split_dim cuboid1.zs cuboid2.zs in
+  let to_deduct =
+    let%map.Option sx = split_x and sy = split_y and sz = split_z in
+    { xs = sx; ys = sy; zs = sz }
+  in
+  match to_deduct with
+  | None -> [ cuboid1 ]
+  | Some d ->
+      let sub_ranges =
+        let%map.List xs = xs and ys = ys and zs = zs in
+        { xs; ys; zs }
+      in
+      List.filter sub_ranges ~f:(fun sr -> not (equal_range sr d))
+
+let non_overlapping_ons instructions =
+  let handle_instruction ons instruction =
+    let ons' =
+      List.concat_map ons ~f:(fun on -> subtract on (snd instruction))
+    in
+    match instruction with `on, range -> range :: ons' | `off, _ -> ons'
+  in
+  List.fold instructions ~init:[] ~f:handle_instruction
 
 let solve filename =
-  let part2 = part2 filename in
-  (None, Some (Int.to_string part2))
-
-let test =
-  let r1 = (2, 10) in
-  let r2 = (-11, 11) in
-  let outer = { xs = r1; ys = r1; zs = r1 } in
-  let inner = { xs = r2; ys = r2; zs = r2 } in
-  overlap outer inner
+  let solve_part instrs =
+    non_overlapping_ons instrs |> List.sum (module Int) ~f:volume
+  in
+  let input = read_input filename in
+  let part1 = solve_part (within_bounds input) in
+  let part2 = solve_part input in
+  (Some (Int.to_string part1), Some (Int.to_string part2))
