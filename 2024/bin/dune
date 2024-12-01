@@ -1,0 +1,12 @@
+(executable
+ (public_name aoc_2024)
+ (name main)
+ (preprocess
+  (pps ppx_jane))
+ (libraries
+   solutions
+   base
+   core
+   core_unix.command_unix
+   core_unix.filename_unix
+   ppx_jane))
