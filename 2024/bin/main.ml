@@ -7,7 +7,8 @@ module type Day = sig
 end
 
 let solutions : (module Day) Int.Map.t =
-  [ (1, (module Day1 : Day)) ] |> Map.of_alist_exn (module Int)
+  [ (1, (module Day1 : Day)); (2, (module Day2)) ]
+  |> Map.of_alist_exn (module Int)
 
 let print day (module D : Day) input_file =
   let p1, p2 = D.solve input_file in
