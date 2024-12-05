@@ -1,5 +1,5 @@
 (library
  (name solutions)
- (libraries base stdio core str ppx_jane re)
+ (libraries base stdio core str ppx_jane re utils)
  (preprocess
   (pps ppx_jane)))
