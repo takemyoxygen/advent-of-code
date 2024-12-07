@@ -31,7 +31,7 @@ let determine_input_file day is_test explicit_file =
       sprintf "./input/day%d%s.txt" day postfix
 
 let command =
-  Command.basic ~summary:"Runs solutions for Advent of Code 2021"
+  Command.basic ~summary:"Runs solutions for Advent of Code 2024"
     (let%map_open.Command day = anon ("day" %: int)
      and is_test = flag "--test" no_arg ~doc:"Use test file"
      and input =
