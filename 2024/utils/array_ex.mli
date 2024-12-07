@@ -1,0 +1,1 @@
+val index_of : 'a array -> equal: ('a -> 'a -> bool) -> 'a -> int option
