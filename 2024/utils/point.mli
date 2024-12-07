@@ -1,6 +1,6 @@
 open Base
 
-type t
+type t = {x: int; y: int}
 
 module Direction : sig
   val up : t

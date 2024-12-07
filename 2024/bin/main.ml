@@ -13,6 +13,7 @@ let solutions : (module Day) Int.Map.t =
     (3, (module Day3));
     (4, (module Day4));
     (5, (module Day5));
+    (6, (module Day6));
   ]
   |> Map.of_alist_exn (module Int)
 
