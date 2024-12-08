@@ -22,6 +22,8 @@ end
 let zero = { x = 0; y = 0 }
 let create x y = { x; y }
 let move { x = x1; y = y1 } { x = x2; y = y2 } = { x = x1 + x2; y = y1 + y2 }
+let negate { x; y } = { x = -x; y = -y }
+let sub p1 p2 = move p1 (negate p2)
 let to_string { x; y } = sprintf "(%d, %d)" x y
 
 let element_at grid point =
