@@ -18,6 +18,7 @@ val y : t -> int
 val zero : t
 val create : int -> int -> t
 val move : t -> t -> t
+val move_n: t -> n:int -> direction:t -> t
 val negate : t -> t
 val sub: t -> t -> t
 val element_at : 'a array array -> t -> 'a option
