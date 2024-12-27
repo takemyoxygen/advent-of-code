@@ -24,5 +24,7 @@ val sub: t -> t -> t
 val element_at : 'a array array -> t -> 'a option
 val to_string : t -> string
 
+val hash_fold_t : Hash.state -> t -> Hash.state
+
 include Comparable.S with type t := t
 include Hashable.Key with type t := t
