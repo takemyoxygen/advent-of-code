@@ -1,6 +1,6 @@
 open Base
 
-type t = {x: int; y: int}
+type t = {x: int; y: int} [@@deriving fields ~getters, sexp]
 
 module Direction : sig
   val up : t
@@ -13,8 +13,6 @@ module Direction : sig
   val down_left : t
 end
 
-val x : t -> int
-val y : t -> int
 val zero : t
 val create : int -> int -> t
 val move : t -> t -> t
