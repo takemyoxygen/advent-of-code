@@ -27,6 +27,7 @@ let solutions : (module Day) Int.Map.t =
     (18, (module Day18));
     (19, (module Day19));
     (20, (module Day20));
+    (21, (module Day21));
     (22, (module Day22));
     (23, (module Day23));
     (24, (module Day24));

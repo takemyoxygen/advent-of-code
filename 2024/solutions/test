@@ -1,0 +1,55 @@
+579A - 80
+With min length:
+<v<A>>^AA<vA<A>>^AvAA^<A>A<v<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>A<v<A>A>^AAAvA^<A>A
+<v<A>>^AA<vA<A>>^AvAA^<A>A<v<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A
+<v<A>>^AA<vA<A>>^AvAA^<A>A<v<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>A<v<A>A^>AAAvA^<A>A
+<v<A>>^AA<vA<A>>^AvAA^<A>A<v<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>A<v<A>A^>AAAvA<^A>A
+<v<A>>^AA<vA<A>>^AvAA^<A>A<v<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>Av<<A>A>^AAAvA^<A>A
+With optimal:
+v<<A>>^AA<vA<A>>^AvAA^<A>Av<<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>Av<<A>A>^AAAvA^<A>A
+v<<A>>^AA<vA<A>>^AvAA^<A>Av<<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>Av<<A>A>^AAAvA<^A>A
+v<<A>>^AA<vA<A>>^AvAA^<A>Av<<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>Av<<A>A^>AAAvA^<A>A
+v<<A>>^AA<vA<A>>^AvAA^<A>Av<<A>>^A<vA<A>>^AvAA^<A>A<vA>^AA<A>Av<<A>A^>AAAvA<^A>A
+v<<A>>^AA<vA<A>>^AvAA^<A>Av<<A>>^A<vA<A>>^AvAA^<A>A<vA^>AA<A>Av<<A>A>^AAAvA^<A>A
+
+670A
+With min length:
+<v<A>>^AAvA^A<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^A<v<A>>^AAAvA^<A>A<vA>^A<A>A
+<v<A>>^AAvA^A<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^A<v<A>>^AAAvA^<A>A<vA^>A<A>A
+<v<A>>^AAvA^A<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^A<v<A>>^AAAvA^<A>Av<A>^A<A>A
+<v<A>>^AAvA^A<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^A<v<A>>^AAAvA^<A>Av<A^>A<A>A
+<v<A>>^AAvA^A<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^A<v<A>>^AAAvA<^A>A<vA>^A<A>A
+With optimal:
+v<<A>>^AAvA^Av<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^Av<<A>>^AAAvA^<A>A<vA>^A<A>A
+v<<A>>^AAvA^Av<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^Av<<A>>^AAAvA^<A>A<vA^>A<A>A
+v<<A>>^AAvA^Av<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^Av<<A>>^AAAvA^<A>Av<A>^A<A>A
+v<<A>>^AAvA^Av<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^Av<<A>>^AAAvA^<A>Av<A^>A<A>A
+v<<A>>^AAvA^Av<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^Av<<A>>^AAAvA<^A>A<vA>^A<A>A
+
+Code: 839A
+With min length:
+<v<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^A<v<A>>^AAvA^<A>A<v<A>>^AAvA^A<v<A>A>^AAAvA^<A>A
+<v<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^A<v<A>>^AAvA^<A>A<v<A>>^AAvA^A<v<A>A>^AAAvA<^A>A
+<v<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^A<v<A>>^AAvA^<A>A<v<A>>^AAvA^A<v<A>A^>AAAvA^<A>A
+<v<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^A<v<A>>^AAvA^<A>A<v<A>>^AAvA^A<v<A>A^>AAAvA<^A>A
+<v<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^A<v<A>>^AAvA^<A>A<v<A>>^AAvA^Av<<A>A>^AAAvA^<A>A
+With optimal:
+v<<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^Av<<A>>^AAvA^<A>Av<<A>>^AAvA^Av<<A>A>^AAAvA^<A>A
+v<<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^Av<<A>>^AAvA^<A>Av<<A>>^AAvA^Av<<A>A>^AAAvA<^A>A
+v<<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^Av<<A>>^AAvA^<A>Av<<A>>^AAvA^Av<<A>A^>AAAvA^<A>A
+v<<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^Av<<A>>^AAvA^<A>Av<<A>>^AAvA^Av<<A>A^>AAAvA<^A>A
+v<<A>>^AAA<vA<A>>^AvAA^<A>A<vA>^Av<<A>>^AAvA<^A>Av<<A>>^AAvA^Av<<A>A>^AAAvA^<A>A
+
+Code: 169A
+With min length:
+<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^A<v<A>>^AvA^A<v<A>A>^AAAvA^<A>A
+<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^A<v<A>>^AvA^A<v<A>A>^AAAvA<^A>A
+<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^A<v<A>>^AvA^A<v<A>A^>AAAvA^<A>A
+<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^A<v<A>>^AvA^A<v<A>A^>AAAvA<^A>A
+<v<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^A<v<A>>^AvA^Av<<A>A>^AAAvA^<A>A
+With optimal:
+v<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^Av<<A>>^AvA^Av<<A>A>^AAAvA^<A>A
+v<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^Av<<A>>^AvA^Av<<A>A>^AAAvA<^A>A
+v<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^Av<<A>>^AvA^Av<<A>A^>AAAvA^<A>A
+v<<A>>^A<vA<A>>^AAvAA^<A>A<vA>^AA<Av<A>>^AvA^Av<<A>>^AvA^Av<<A>A^>AAAvA<^A>A
+v<<A>>^A<vA<A>>^AAvAA^<A>A<vA^>AA<Av<A>>^AvA^Av<<A>>^AvA^Av<<A>A>^AAAvA^<A>A
