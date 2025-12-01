@@ -27,3 +27,7 @@ __pycache__
 node_modules
 _build
 
+*.beam
+*.ez
+build
+erl_crash.dump

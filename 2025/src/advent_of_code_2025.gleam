@@ -1,0 +1,29 @@
+import argv
+import day1
+import gleam/dict
+import gleam/int
+import gleam/io
+import gleam/list
+import gleam/option
+
+pub fn main() -> Nil {
+  let days =
+    [day1.solve]
+    |> list.index_map(fn(x, i) { #(i + 1, x) })
+    |> dict.from_list
+  case argv.load().arguments {
+    ["day", day_str, input_file] ->
+      case int.parse(day_str) {
+        Ok(day) -> {
+          io.println("Running Advent of Code 2025, Day " <> day_str)
+          let assert Ok(solve) = dict.get(days, day)
+          let #(part1, part2) = solve(input_file)
+          io.println("Part 1: " <> option.unwrap(part1, "N/A"))
+          io.println("Part 2: " <> option.unwrap(part2, "N/A"))
+        }
+        Error(_) -> io.println("Please provide a valid day number.")
+      }
+    _args ->
+      io.println("Unexpected args. Expected usage: run 12 input/day12.txt")
+  }
+}
