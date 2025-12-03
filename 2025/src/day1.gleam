@@ -3,22 +3,19 @@ import gleam/int
 import gleam/list
 import gleam/option
 import gleam/string
+import utils
 
 type Instruction {
   L(distance: Int)
   R(distance: Int)
 }
 
-fn parse_or_panic(str: String) {
-  let assert Ok(result) = int.parse(str)
-  result
-}
 
 fn parse_input(lines) {
   list.map(lines, fn(line) {
     case line {
-      "L" <> dist -> L(parse_or_panic(dist))
-      "R" <> dist -> R(parse_or_panic(dist))
+      "L" <> dist -> L(utils.parse_or_panic(dist))
+      "R" <> dist -> R(utils.parse_or_panic(dist))
       _ -> panic as { "Unexpected input line: " <> line }
     }
   })
