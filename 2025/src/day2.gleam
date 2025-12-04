@@ -16,49 +16,78 @@ fn parse_input(file: String) {
   })
 }
 
-fn num_digits(num, acc) {
-  case num {
-    num if num < 10 -> acc + 1
-    _ -> num_digits(num / 10, acc + 1)
-  }
+fn repeat_num(num, length, times) {
+  let assert Ok(mult_10) = int.power(10, int.to_float(length))
+  let mult_10 = float.round(mult_10)
+  list.range(0, times - 1)
+  |> list.fold(0, fn(acc, i) {
+    let assert Ok(mult) = int.power(mult_10, int.to_float(i))
+    acc + num * float.round(mult)
+  })
 }
 
-fn repeat_number(num) {
-  let digits = num_digits(num, 0)
-  let assert Ok(mult) = int.power(10, int.to_float(digits))
-  num * float.round(mult) + num
+fn all_nums_of_length(length) {
+  let assert Ok(mult) = int.power(10, int.to_float(length - 1))
+  let assert Ok(next_mult) = int.power(10, int.to_float(length))
+  list.range(float.round(mult), float.round(next_mult) - 1)
 }
 
-fn find_invalids(current, lo, hi, acc) {
-  case repeat_number(current) {
-    x if x < lo -> find_invalids(current + 1, lo, hi, acc)
-    x if x > hi -> list.reverse(acc)
-    x -> find_invalids(current + 1, lo, hi, [x, ..acc])
-  }
+fn all_repeats_with_length(base_length, times) {
+  all_nums_of_length(base_length)
+  |> list.map(fn(num) { repeat_num(num, base_length, times) })
 }
 
-pub fn find_invalid_ids(range) {
-  let #(lo, hi) = range
-
-  let start = case string.length(lo) {
-    n if n % 2 == 0 -> string.slice(lo, 0, n / 2) |> utils.parse_or_panic
-    n -> {
-      let assert Ok(next_invalid_part) = int.power(10, int.to_float(n / 2))
-      float.round(next_invalid_part)
+fn repeats_of_count(max_length, count) {
+  let lengths = list.range(1, max_length)
+  list.flat_map(lengths, fn(length) {
+    case length {
+      _ if length % count == 0 -> {
+        let base_length = length / count
+        all_repeats_with_length(base_length, count)
+      }
+      _ -> []
     }
-  }
-
-  find_invalids(start, utils.parse_or_panic(lo), utils.parse_or_panic(hi), [])
+  })
 }
 
-fn part1(ranges) {
+fn all_repeats(max_length) {
+  let lengths = list.range(2, max_length)
+  list.flat_map(lengths, fn(count) { repeats_of_count(max_length, count) })
+}
+
+fn sum_within_ranges(nums, ranges) {
   ranges
-  |> list.flat_map(find_invalid_ids)
+  |> list.flat_map(fn(range) {
+    let #(lo, hi) = range
+    nums
+    |> list.filter(fn(x) { lo <= x && x <= hi })
+  })
   |> list.fold(0, fn(x, acc) { acc + x })
+}
+
+fn part1(max_length, ranges) {
+  let repeats = repeats_of_count(max_length, 2) |> list.unique
+  sum_within_ranges(repeats, ranges)
+}
+
+fn part2(max_length, ranges) {
+  let repeats = all_repeats(max_length) |> list.unique
+  sum_within_ranges(repeats, ranges)
 }
 
 pub fn solve(file: String) {
   let ranges = parse_input(file)
-  let part1 = part1(ranges) |> int.to_string |> option.Some
-  #(part1, option.None)
+  let max_length =
+    list.fold(ranges, 0, fn(acc, range) {
+      let #(lo, hi) = range
+      int.max(int.max(string.length(lo), string.length(hi)), acc)
+    })
+  let ranges =
+    list.map(ranges, fn(range) {
+      let #(lo, hi) = range
+      #(utils.parse_or_panic(lo), utils.parse_or_panic(hi))
+    })
+  let part1 = part1(max_length, ranges) |> int.to_string |> option.Some
+  let part2 = part2(max_length, ranges) |> int.to_string |> option.Some
+  #(part1, part2)
 }
