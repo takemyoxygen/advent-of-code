@@ -4,6 +4,7 @@ import day2
 import day3
 import day4
 import day5
+import day6
 import gleam/dict
 import gleam/int
 import gleam/io
@@ -12,7 +13,7 @@ import gleam/option
 
 pub fn main() -> Nil {
   let days =
-    [day1.solve, day2.solve, day3.solve, day4.solve, day5.solve]
+    [day1.solve, day2.solve, day3.solve, day4.solve, day5.solve, day6.solve]
     |> list.index_map(fn(x, i) { #(i + 1, x) })
     |> dict.from_list
   case argv.load().arguments {
