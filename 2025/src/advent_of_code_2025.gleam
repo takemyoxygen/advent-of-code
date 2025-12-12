@@ -7,6 +7,7 @@ import day5
 import day6
 import day7
 import day8
+import day9
 import gleam/dict
 import gleam/int
 import gleam/io
@@ -24,6 +25,7 @@ pub fn main() -> Nil {
       day6.solve,
       day7.solve,
       day8.solve,
+      day9.solve,
     ]
     |> list.index_map(fn(x, i) { #(i + 1, x) })
     |> dict.from_list
@@ -33,6 +35,7 @@ pub fn main() -> Nil {
         Ok(day) -> {
           io.println("Running Advent of Code 2025, Day " <> day_str)
           let assert Ok(solve) = dict.get(days, day)
+            as "Did you solve this day?"
           let #(part1, part2) = solve(input_file)
           io.println("Part 1: " <> option.unwrap(part1, "N/A"))
           io.println("Part 2: " <> option.unwrap(part2, "N/A"))

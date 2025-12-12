@@ -1,4 +1,5 @@
 import day3
+import day9
 import dsu
 import gleam/list
 import gleeunit
@@ -36,4 +37,10 @@ pub fn dsu_test() {
   let assert Ok(dsu) = dsu.union(dsu, 4, 3)
   let assert Ok(dsu) = dsu.union(dsu, 5, 3)
   assert dsu.find(dsu, 5) == Ok(1)
+}
+
+pub fn day9_test() {
+  assert day9.to_segments([1, 2, 3, 4]) == [#(1, 2), #(2, 3), #(3, 4), #(4, 1)]
+
+  assert day9.intersects(#(#(0, 0), #(10, 10)), #(#(3, 3), #(3, 4))) == True
 }

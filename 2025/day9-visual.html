@@ -1,0 +1,495 @@
+<!-- AI generated thing to render points for the Day 9 -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polygon Visualizer</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #1a1a1a;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1 {
+        margin-bottom: 10px;
+      }
+      .upload-section {
+        margin: 20px 0;
+        padding: 20px;
+        background: #2a2a2a;
+        border-radius: 10px;
+        border: 2px dashed #666;
+        text-align: center;
+      }
+      .upload-section.dragover {
+        border-color: #4caf50;
+        background: #333;
+      }
+      input[type="file"] {
+        display: none;
+      }
+      .file-label {
+        padding: 12px 24px;
+        background: #4caf50;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+      }
+      .file-label:hover {
+        background: #45a049;
+      }
+      .controls {
+        margin: 20px 0;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button {
+        padding: 10px 20px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      button:disabled {
+        background: #555;
+        cursor: not-allowed;
+      }
+      label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      canvas {
+        border: 2px solid #444;
+        background: #2a2a2a;
+        cursor: move;
+        display: none;
+      }
+      canvas.visible {
+        display: block;
+      }
+      .info {
+        margin-top: 15px;
+        font-size: 14px;
+        color: #aaa;
+      }
+      .error {
+        color: #ff6b6b;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>2D Polygon Visualizer</h1>
+
+    <div class="upload-section" id="uploadSection">
+      <p>
+        Upload a text file with point coordinates (X,Y format, one per line)
+      </p>
+      <label for="fileInput" class="file-label">Choose File</label>
+      <input type="file" id="fileInput" accept=".txt" />
+      <p style="margin-top: 10px; font-size: 12px; color: #888">
+        Or drag and drop a file here
+      </p>
+      <div id="fileName" style="margin-top: 10px; color: #4caf50"></div>
+      <div id="errorMsg" class="error"></div>
+    </div>
+
+    <div class="controls" id="controls" style="display: none">
+      <button onclick="resetView()">Reset View</button>
+      <button onclick="clearSelection()">Clear Selection</button>
+      <label>
+        <input type="checkbox" id="fillToggle" checked onchange="draw()" />
+        Fill Polygon
+      </label>
+      <label>
+        <input type="checkbox" id="pointsToggle" onchange="draw()" />
+        Show Points
+      </label>
+    </div>
+
+    <canvas id="canvas" width="1000" height="800"></canvas>
+
+    <div class="info" id="info" style="display: none">
+      <div>
+        Points: <span id="pointCount">0</span> | Use mouse wheel to zoom | Drag
+        to pan | Click points to select
+      </div>
+      <div style="margin-top: 10px">
+        <strong>Selected Points:</strong> <span id="selectedInfo">None</span>
+      </div>
+      <div style="margin-top: 5px">
+        <strong>Rectangle Area:</strong> <span id="areaInfo">-</span>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      const fileInput = document.getElementById("fileInput");
+      const uploadSection = document.getElementById("uploadSection");
+
+      let points = [];
+      let minX, maxX, minY, maxY;
+      let offsetX = 0;
+      let offsetY = 0;
+      let scale = 1;
+      let selectedPoints = [];
+      let isDragging = false;
+      let lastX, lastY;
+
+      // File upload handlers
+      fileInput.addEventListener("change", handleFile);
+
+      uploadSection.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadSection.classList.add("dragover");
+      });
+
+      uploadSection.addEventListener("dragleave", () => {
+        uploadSection.classList.remove("dragover");
+      });
+
+      uploadSection.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadSection.classList.remove("dragover");
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          processFile(file);
+        }
+      });
+
+      function handleFile(e) {
+        const file = e.target.files[0];
+        if (file) {
+          processFile(file);
+        }
+      }
+
+      function processFile(file) {
+        document.getElementById("errorMsg").textContent = "";
+        document.getElementById(
+          "fileName"
+        ).textContent = `Loading ${file.name}...`;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const content = e.target.result;
+            parsePoints(content);
+            document.getElementById(
+              "fileName"
+            ).textContent = `✓ Loaded ${file.name}`;
+            showVisualization();
+          } catch (error) {
+            document.getElementById(
+              "errorMsg"
+            ).textContent = `Error: ${error.message}`;
+            document.getElementById("fileName").textContent = "";
+          }
+        };
+        reader.onerror = () => {
+          document.getElementById("errorMsg").textContent =
+            "Error reading file";
+          document.getElementById("fileName").textContent = "";
+        };
+        reader.readAsText(file);
+      }
+
+      function parsePoints(content) {
+        const lines = content.trim().split("\n");
+        points = [];
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+
+          const parts = line.split(",");
+          if (parts.length !== 2) {
+            throw new Error(
+              `Invalid format on line ${
+                i + 1
+              }: "${line}". Expected "X,Y" format.`
+            );
+          }
+
+          const x = parseInt(parts[0].trim());
+          const y = parseInt(parts[1].trim());
+
+          if (isNaN(x) || isNaN(y)) {
+            throw new Error(`Invalid coordinates on line ${i + 1}: "${line}"`);
+          }
+
+          points.push({ x, y });
+        }
+
+        if (points.length < 3) {
+          throw new Error("Need at least 3 points to form a polygon");
+        }
+
+        calculateBounds();
+      }
+
+      function calculateBounds() {
+        minX = Infinity;
+        maxX = -Infinity;
+        minY = Infinity;
+        maxY = -Infinity;
+
+        points.forEach((p) => {
+          minX = Math.min(minX, p.x);
+          maxX = Math.max(maxX, p.x);
+          minY = Math.min(minY, p.y);
+          maxY = Math.max(maxY, p.y);
+        });
+      }
+
+      function showVisualization() {
+        document.getElementById("controls").style.display = "flex";
+        document.getElementById("info").style.display = "block";
+        canvas.classList.add("visible");
+        document.getElementById("pointCount").textContent = points.length;
+        selectedPoints = [];
+        resetView();
+      }
+
+      function resetView() {
+        const width = maxX - minX;
+        const height = maxY - minY;
+        const padding = 50;
+
+        const scaleX = (canvas.width - padding * 2) / width;
+        const scaleY = (canvas.height - padding * 2) / height;
+        scale = Math.min(scaleX, scaleY);
+
+        // Handle case where polygon is a single point or line
+        if (scale === Infinity || scale === 0) {
+          scale = 1;
+        }
+
+        offsetX = (canvas.width - width * scale) / 2 - minX * scale;
+        offsetY = (canvas.height - height * scale) / 2 - minY * scale;
+
+        draw();
+      }
+
+      function clearSelection() {
+        selectedPoints = [];
+        updateSelectedInfo();
+        draw();
+      }
+
+      function toScreenX(x) {
+        return x * scale + offsetX;
+      }
+
+      function toScreenY(y) {
+        return y * scale + offsetY;
+      }
+
+      function updateSelectedInfo() {
+        if (selectedPoints.length === 0) {
+          document.getElementById("selectedInfo").textContent = "None";
+          document.getElementById("areaInfo").textContent = "-";
+        } else if (selectedPoints.length === 1) {
+          const p = selectedPoints[0];
+          document.getElementById(
+            "selectedInfo"
+          ).textContent = `Point 1: (${p.x}, ${p.y})`;
+          document.getElementById("areaInfo").textContent = "-";
+        } else {
+          const p1 = selectedPoints[0];
+          const p2 = selectedPoints[1];
+          document.getElementById(
+            "selectedInfo"
+          ).textContent = `Point 1: (${p1.x}, ${p1.y}), Point 2: (${p2.x}, ${p2.y})`;
+
+          const area =
+            (Math.abs(p1.x - p2.x) + 1) * (Math.abs(p1.y - p2.y) + 1);
+          document.getElementById("areaInfo").textContent =
+            area.toLocaleString();
+        }
+      }
+
+      function draw() {
+        if (points.length === 0) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const fillEnabled = document.getElementById("fillToggle").checked;
+        const pointsEnabled = document.getElementById("pointsToggle").checked;
+
+        // Draw polygon
+        ctx.beginPath();
+        ctx.moveTo(toScreenX(points[0].x), toScreenY(points[0].y));
+
+        for (let i = 1; i < points.length; i++) {
+          ctx.lineTo(toScreenX(points[i].x), toScreenY(points[i].y));
+        }
+        ctx.closePath();
+
+        if (fillEnabled) {
+          ctx.fillStyle = "rgba(74, 144, 226, 0.3)";
+          ctx.fill();
+        }
+
+        ctx.strokeStyle = "#4A90E2";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw points
+        if (pointsEnabled) {
+          ctx.fillStyle = "#FF6B6B";
+          points.forEach((p) => {
+            ctx.beginPath();
+            ctx.arc(toScreenX(p.x), toScreenY(p.y), 3, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        }
+
+        // Draw selected points and rectangle
+        if (selectedPoints.length > 0) {
+          // Draw selected points larger
+          selectedPoints.forEach((p, idx) => {
+            ctx.fillStyle = idx === 0 ? "#00FF00" : "#FFFF00";
+            ctx.beginPath();
+            ctx.arc(toScreenX(p.x), toScreenY(p.y), 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          });
+
+          // Draw rectangle if two points selected
+          if (selectedPoints.length === 2) {
+            const p1 = selectedPoints[0];
+            const p2 = selectedPoints[1];
+
+            const minRectX = Math.min(p1.x, p2.x);
+            const maxRectX = Math.max(p1.x, p2.x);
+            const minRectY = Math.min(p1.y, p2.y);
+            const maxRectY = Math.max(p1.y, p2.y);
+
+            ctx.strokeStyle = "#FFD700";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(
+              toScreenX(minRectX),
+              toScreenY(minRectY),
+              (maxRectX - minRectX) * scale,
+              (maxRectY - minRectY) * scale
+            );
+
+            ctx.fillStyle = "rgba(255, 215, 0, 0.1)";
+            ctx.fillRect(
+              toScreenX(minRectX),
+              toScreenY(minRectY),
+              (maxRectX - minRectX) * scale,
+              (maxRectY - minRectY) * scale
+            );
+          }
+        }
+      }
+
+      // Mouse interaction
+      canvas.addEventListener("mousedown", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        // Check if clicking near a point
+        const threshold = 10; // pixels
+        let clickedPoint = null;
+
+        for (const p of points) {
+          const screenX = toScreenX(p.x);
+          const screenY = toScreenY(p.y);
+          const dist = Math.sqrt(
+            (mouseX - screenX) ** 2 + (mouseY - screenY) ** 2
+          );
+
+          if (dist <= threshold) {
+            clickedPoint = p;
+            break;
+          }
+        }
+
+        if (clickedPoint) {
+          // Point clicked - add to selection
+          const alreadySelected = selectedPoints.findIndex(
+            (sp) => sp.x === clickedPoint.x && sp.y === clickedPoint.y
+          );
+
+          if (alreadySelected >= 0) {
+            // Deselect if already selected
+            selectedPoints.splice(alreadySelected, 1);
+          } else if (selectedPoints.length < 2) {
+            // Add to selection if less than 2 points
+            selectedPoints.push(clickedPoint);
+          } else {
+            // Replace oldest selection
+            selectedPoints.shift();
+            selectedPoints.push(clickedPoint);
+          }
+
+          updateSelectedInfo();
+          draw();
+        } else {
+          // Start dragging
+          isDragging = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+        }
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+          const dx = e.clientX - lastX;
+          const dy = e.clientY - lastY;
+          offsetX += dx;
+          offsetY += dy;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          draw();
+        }
+      });
+
+      canvas.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        isDragging = false;
+      });
+
+      canvas.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const zoom = e.deltaY < 0 ? 1.1 : 0.9;
+
+        offsetX = mouseX - (mouseX - offsetX) * zoom;
+        offsetY = mouseY - (mouseY - offsetY) * zoom;
+        scale *= zoom;
+
+        draw();
+      });
+    </script>
+  </body>
+</html>
