@@ -1,6 +1,7 @@
 import argv
 import day1
 import day10
+import day11
 import day2
 import day3
 import day4
@@ -28,6 +29,7 @@ pub fn main() -> Nil {
       day8.solve,
       day9.solve,
       day10.solve,
+      day11.solve,
     ]
     |> list.index_map(fn(x, i) { #(i + 1, x) })
     |> dict.from_list
